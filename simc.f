@@ -41,6 +41,9 @@
 	real*8 grnd
 	real*8 ang_targ_earm,ang_targ_parm
 	logical restorerndstate
+c
+         logical end_of_2pi_file
+         common /eventfile/  end_of_2pi_file
 c 
 
 ! INITIALIZE
@@ -210,7 +213,8 @@ cdg	call time (timestring1(11:23))
 ! ... generate an event
 	  call generate(main,vertex,orig,success)
 	  if(debug(2)) write(6,*)'sim: after gen, success =',success
-
+	  if ( doing_2pi .and. end_of_2pi_file) nevent = abs(ngen)+1
+          if(end_of_2pi_file) success = .false.
 ! Run the event through various manipulations, checking to see whether
 ! it made it at each stage
 
@@ -682,7 +686,9 @@ c	  write(7,*) 'BP thingie in/out     ',shmsSTOP_BP_in,shmsSTOP_BP_out
 	    write(iun,*) '              ****--------  D(e,e''p)  --------****'
 	  else if (doing_heavy) then
 	    write(iun,*) '              ****--------  A(e,e''p)  --------****'
-	  else
+	  else if (doing_2pi) then
+	    write(iun,*) '              ****--------  read from file  --------****'	  
+          else
 	    stop 'I don''t have ANY idea what (e,e''p) we''re doing!!!'
 	  endif
 	else if (doing_semi) then 

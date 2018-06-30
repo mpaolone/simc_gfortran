@@ -124,6 +124,7 @@
 
 	real*8 nsig_max
 	parameter(nsig_max=3.0e0)      !max #/sigma for gaussian ran #s.
+	logical ok_2pi
 
 
 ! Randomize the position of the interaction inside the available region.
@@ -296,6 +297,17 @@ C modified 5/15/06 for poinct
 	  vertex%e%P = vertex%e%E
 	  vertex%e%delta = 100.*(vertex%e%P-spec%e%P)/spec%e%P
 	endif	!not (doing_hyd_elast)
+	if ( doing_2pi) then
+	   ok_2pi = .true.
+	   call get_file_event(spec%e%theta,spec%p%theta,
+     >       vertex%e%xptar,vertex%e%yptar,vertex%e%p,
+     >       vertex%p%xptar,vertex%p%yptar,vertex%p%p,ok_2pi)
+	     if ( .not. ok_2pi) goto 100
+	     vertex%e%delta = 100.*(vertex%e%P-spec%e%P)/spec%e%P
+	     vertex%p%delta = 100.*(vertex%p%P-spec%p%P)/spec%p%P
+	     vertex%e%E = sqrt(vertex%e%P*vertex%e%P + 0.511*0.511)
+	     vertex%p%E = sqrt(vertex%p%P*vertex%p%P + 0.511*0.511)
+	   endif
 
 
 ! Calculate the electron and proton PHYSICS angles from the spectrometer angles.
@@ -647,6 +659,12 @@ c	  endif
 	      success=.false.
 	   endif
 
+	elseif (doing_2pi) then
+	vertex%Pmx = vertex%p%P*vertex%up%x - vertex%q*vertex%uq%x
+	vertex%Pmy = vertex%p%P*vertex%up%y - vertex%q*vertex%uq%y
+	vertex%Pmz = vertex%p%P*vertex%up%z - vertex%q*vertex%uq%z
+	vertex%Pm = sqrt(vertex%Pmx**2+vertex%Pmy**2+vertex%Pmz**2)
+	vertex%Em = vertex%nu + targ%Mtar_struck - vertex%p%E
 	elseif (doing_phsp) then
 
 	  vertex%p%P = spec%p%P		!????? single arm phsp??
@@ -873,6 +891,8 @@ CDJG Calculate the "Collins" (phi_pq+phi_targ) and "Sivers"(phi_pq-phi_targ) ang
 ! the recoiling struck nucleon (hyperon), so Trec=0 for hydrogen target.
 
 	if (doing_hyd_elast) then
+	  vertex%Trec = 0.0
+	else if (doing_2pi) then
 	  vertex%Trec = 0.0
 	else if (doing_deuterium) then
 	  vertex%Pm = vertex%Pmiss
@@ -1329,7 +1349,7 @@ CDJG Calculate the "Collins" (phi_pq+phi_targ) and "Sivers"(phi_pq-phi_targ) ang
 
 ! The spectral function weighting
 
-	if (doing_hyd_elast.or.doing_pion.or.doing_kaon.or.doing_delta.or.doing_phsp.or.doing_rho.or.doing_semi) then !no SF.
+	if (doing_hyd_elast.or.doing_pion.or.doing_kaon.or.doing_delta.or.doing_phsp.or.doing_rho.or.doing_semi.or.doing_2pi) then !no SF.
 	  main%SF_weight=1.0
 	else if (use_benhar_sf.and.doing_heavy) then ! Doing Spectral Functions
 	   call sf_lookup_diff(vertex%Em, vertex%Pm, weight)
@@ -1378,7 +1398,7 @@ CDJG Calculate the "Collins" (phi_pq+phi_targ) and "Sivers"(phi_pq-phi_targ) ang
 
 	tgtweight = 1.0
 
-	if (doing_phsp) then
+	if (doing_phsp .or. doing_2pi) then
 	  main%sigcc = 1.0
 	  main%sigcc_recon = 1.0
 

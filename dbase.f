@@ -197,6 +197,9 @@ C DJG:
 	  doing_hyd_elast = (nint(targ%A).eq.1)
 	  doing_deuterium = (nint(targ%A).eq.2)
 	  doing_heavy = (nint(targ%A).ge.3)
+	  if ( doing_2pi) then
+	     doing_hyd_elast =  .false.
+          endif
 	endif
 
 	Mh2 = Mh*Mh
@@ -643,6 +646,8 @@ C DJG:
 	    write(6,*) ' ****--------  D(e,e''p)  --------****'
 	  else if (doing_heavy) then
 	    write(6,*) ' ****--------  A(e,e''p)  --------****'
+	  else if (doing_2pi) then
+	    write(6,*) ' ****--------  file event  --------****'
 	  else
 	    stop 'I don''t have ANY idea what (e,e''p) we''re doing!!!'
 	  endif
@@ -879,6 +884,7 @@ C DJG:
 	ierr = regparmint('doing_delta',doing_delta,0)
 	ierr = regparmint('doing_semi', doing_semi,0)
 	ierr = regparmint('doing_hplus', doing_hplus,1)
+	ierr = regparmint('doing_2pi',doing_2pi,0)
 	ierr = regparmint('doing_rho',doing_rho,0)
 	ierr = regparmint('doing_decay',doing_decay,0)
 	ierr = regparmdouble('ctau',ctau,0)
