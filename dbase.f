@@ -274,7 +274,7 @@ C DJG:
 	  sign_hadron=1.0
 	else if (doing_delta) then		!Strike (and detect) proton, pion 'recoil'
 	  targ%Mtar_struck = Mp
-	  targ%Mrec_struck = Mpi
+	  targ%Mrec_struck = 134.96
 	  sign_hadron=1.0
 	else if(doing_semi) then         ! For now, just assuming proton mass
 	   targ%Mtar_struck = Mp

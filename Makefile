@@ -31,6 +31,7 @@ A	= $(simcdir)/shared/
 SH	= $(simcdir)/shms/
 T       = $(simcdir)/cteq5/
 C       = $(simcdir)/calo/
+M       = $(simcdir)/MAID/
 
 OBJ1	= target.o brem.o gauss1.o NtupleInit.o NtupleClose.o enerloss_new.o
 OBJ2	= radc.o init.o dbase.o physics_kaon.o physics_pion.o physics_delta.o physics_proton.o loren.o sf_lookup.o
@@ -45,7 +46,8 @@ OBJA	= $(L)mc_hrsl.o $(L)mc_hrsl_hut.o $(L)mc_hrsl_recon.o
 OBJB	= $(SH)mc_shms.o $(SH)mc_shms_hut.o $(SH)mc_shms_recon.o
 OBJC    = $(T)Ctq5Pdf.o
 OBJD    = $(C)mc_calo.o $(C)mc_calo_recon.o
-my_objs	=  $(OBJ1) $(OBJ2) $(OBJ3) $(OBJ4) $(OBJ5) $(OBJ6) $(OBJ7) $(OBJ8) $(OBJ9) $(OBJA) $(OBJB) $(OBJC) $(OBJD)
+OBJE    = $(M)get_xn_maid_07.o
+my_objs	=  $(OBJ1) $(OBJ2) $(OBJ3) $(OBJ4) $(OBJ5) $(OBJ6) $(OBJ7) $(OBJ8) $(OBJ9) $(OBJA) $(OBJB) $(OBJC) $(OBJD) $(OBJE)
 
 my_deps = $(my_objs:.o=.d)
 
@@ -63,7 +65,7 @@ ifeq ($(MYOS),Linux)
 #  CERN_ROOT = /usr/lib/cernlib/2006
 # 64 bit, standard Fedora distributuion
 #  CERN_ROOT =  /usr/lib64/cernlib/2006 
-  FFLAGSA=-O -W -ffixed-line-length-132 -ff2c -fno-automatic -fdefault-real-8
+  FFLAGSA=-O -w -ffixed-line-length-132 -ff2c -fno-automatic -fdefault-real-8
   INCLUDES=-I.
   FFLAGS= $(INCLUDES) $(FFLAGSA)
   FFLAG1=$(FFLAGS) -c
@@ -164,8 +166,8 @@ CTP/O.Linux/Linux/lib/libctp.a:
 
 
 clean:
-	$(RM) *.[od] $(H)*.[od] $(S)*.[od] $(L)*.[od] $(R)*.[od] $(SH)*.[od] $(A)*.[od] $(T)*.[od] $(C)*.[od] simc
+	$(RM) *.[od] $(H)*.[od] $(S)*.[od] $(L)*.[od] $(R)*.[od] $(SH)*.[od] $(A)*.[od] $(T)*.[od] $(C)*.[od] $(M)*.[od] simc
 
 real_clean:
-	$(RM) *.[od] $(H)*.[od] $(S)*.[od] $(L)*.[od] $(R)*.[od] $(SH)*.[od] $(A)*.[od] $(T)*.[od] $(C)*.[od] simc
+	$(RM) *.[od] $(H)*.[od] $(S)*.[od] $(L)*.[od] $(R)*.[od] $(SH)*.[od] $(A)*.[od] $(T)*.[od] $(C)*.[od] $(M)*.[od] simc
 	rm -r CTP/O.$(MYOS)

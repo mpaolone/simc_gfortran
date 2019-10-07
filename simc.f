@@ -41,6 +41,10 @@
 	real*8 grnd
 	real*8 ang_targ_earm,ang_targ_parm
 	logical restorerndstate
+c
+         logical prod_in_cm
+         common /cm_logical/  prod_in_cm
+         data prod_in_cm / .true. /
 c 
 
 ! INITIALIZE
@@ -226,11 +230,12 @@ cdg	call time (timestring1(11:23))
 	    call complete_recon_ev(recon,success)
 	  endif
 
-	  if(debug(2)) write(6,*)'sim: after comp_ev, success =',success
+	  if(debug(2)) write(6,*)'sim: after comp_recon_ev, success =',success
 	  if(debug(5)) write(6,*) 'recon%Em,recon%Pm',recon%Em,recon%Pm
 ! ... calculate remaining pieces of the main structure
 
 	  if (success) call complete_main(.false.,main,vertex,vertex0,recon,success)
+	  if(debug(2)) write(6,*)'sim: after comp_main, success =',success
 ! ... Apply SPedge cuts to success if hard_cuts is set.
 	    pass_cuts = .not. (
      >	      recon%e%delta .le. (SPedge%e%delta%min+slop%MC%e%delta%used) .or.
@@ -393,6 +398,7 @@ c	call time (timestring2(11:23))
 	if (doing_deuterium.or.doing_heavy.or.doing_pion.or.doing_kaon
      >      .or.doing_delta.or.doing_rho .or. doing_semi) then
 	  genvol = genvol * domega_p * (gen%e%E%max-gen%e%E%min)
+	  if (prod_in_cm) genvol = genvol/domega_p*4*pi
 	endif
 
 	if (doing_heavy.or.doing_semi) then		!6-fold
@@ -1233,6 +1239,7 @@ c	call complete_ev(main0,vertex0,success)
 c	if (debug(2)) write(6,*)'calc_cent: done with complete_ev'
 c	if (.not.success) stop 'COMPLETE_EV failed trying to complete a CENTRAL event!'
 
+	call complete_ev(main0,vertex0,success)
 	call complete_recon_ev(vertex0,success)
 	if (debug(2)) write(6,*)'calc_cent: done with complete_recon_ev'
 	if (.not.success) stop 'COMPLETE_EV failed trying to complete a CENTRAL event!'
