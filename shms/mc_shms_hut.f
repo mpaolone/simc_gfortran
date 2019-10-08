@@ -67,6 +67,13 @@ c mkj
 	logical use_det_cut
 	parameter (use_det_cut=.true.)
 !	parameter (use_det_cut=.false.)
+cadd cut on the hodoscope paddles for VCS 1X paddle 1 at -45
+	real*8 pscin_1x_center,pscin_1x_size,pscin_1x_spacing
+	real*8 pscin_2x_center,pscin_2x_size,pscin_2x_spacing
+	real*8 xs_lo,xs_hi
+	integer pad_1x_lo_num,pad_1x_hi_num,pad_2x_lo_num,pad_2x_hi_num
+	common /shms_scin_x_padcut/ pad_1x_lo_num,pad_1x_hi_num
+     >    ,pad_2x_lo_num,pad_2x_hi_num
 
 C ================================ Executable Code =============================
 
@@ -289,6 +296,24 @@ C at last cathode foil of second drift chamber set, drift to the 1st hodoscope
 	radw = drift/hair_radlen
 	call project(xs,ys,drift,decay_flag,dflag,m2,p,pathlen)
 	if(ms_flag) call musc_ext(m2,p,radw,drift,dydzs,dxdzs,ys,xs)
+c add cut on the hodoscope paddles for VCS paddle 1 at -45
+        pscin_1x_spacing = 7.5
+        pscin_1x_center= -45.0 
+        pscin_1x_size = 8.0
+        xs_lo =  pscin_1x_center+pscin_1x_spacing*(pad_1x_lo_num-1)
+     >      -pscin_1x_size/2.
+        xs_hi =  pscin_1x_center+pscin_1x_spacing*(pad_1x_hi_num-1)
+     >      +pscin_1x_size/2.
+	if ( ys.gt.(hscin_1x_left+hscin_1y_offset) .or.
+     >      ys.lt.(hscin_1x_right+hscin_1y_offset) .or.
+     >       xs .gt. xs_hi .or. xs .lt. xs_lo) then
+	  shmsSTOP_s1 = shmsSTOP_s1 + 1
+	  if (use_det_cut) then
+	     stop_id=20
+	     goto 500
+	  endif
+	endif
+c
 	if (ys.gt.(hscin_1x_left+hscin_1y_offset) .or.
      >      ys.lt.(hscin_1x_right+hscin_1y_offset)) then
 	  shmsSTOP_s1 = shmsSTOP_s1 + 1
@@ -350,6 +375,23 @@ C drift to 2nd hodoscope
 	radw = drift/hair_radlen
 	call project(xs,ys,drift,decay_flag,dflag,m2,p,pathlen)
 	if(ms_flag) call musc_ext(m2,p,radw,drift,dydzs,dxdzs,ys,xs)
+c add cut on the hodoscope paddles for VCS paddle 1 at -45
+        pscin_2x_center= -61.75
+        pscin_2x_size = 10.0
+        pscin_2x_spacing = 9.5
+        xs_lo =  pscin_2x_center+pscin_2x_spacing*(pad_2x_lo_num-1)
+     >      -pscin_1x_size/2.
+        xs_hi =  pscin_2x_center+pscin_2x_spacing*(pad_2x_hi_num-1)
+	if (ys.gt.(hscin_2x_left+hscin_2y_offset) .or.
+     >      ys.lt.(hscin_2x_right+hscin_2y_offset) .or.
+     >  xs .gt. xs_hi .or. xs .lt. xs_lo) then
+	  shmsSTOP_s3 = shmsSTOP_s3 + 1
+	  if (use_det_cut) then
+	     stop_id = 22
+	     goto 500
+	  endif
+	endif
+c
 	if (ys.gt.(hscin_2x_left+hscin_2y_offset) .or.
      >      ys.lt.(hscin_2x_right+hscin_2y_offset)) then
 	  shmsSTOP_s3 = shmsSTOP_s3 + 1

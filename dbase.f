@@ -40,6 +40,7 @@
 	real*8 dum1,dum2,dum3,dum4,dum5,dum6,dum7
 	real*8 mrec_guess
 
+
 	integer*4 iread, iq2, iang
 	integer*4 i, j, k, ii
 	integer*4 ierr, thload, thbook
@@ -57,6 +58,8 @@
 	use_benhar_sf = .false.
 	random_state_file = ' '
 	random_seed = 0
+
+
 
 ! ... read the dbase file.
 
@@ -103,6 +106,11 @@
 	  ierr = thbook()
 	  if (ierr.ne.0) stop ' Booking problem!  Not going to try again...wouldnt be prudent'
 	endif	!extra dbase input file
+c
+	if (pad_1x_lo_num .eq. 0) pad_1x_lo_num=1 
+	if (pad_2x_lo_num .eq. 0) pad_2x_lo_num=1 
+	if (pad_1x_hi_num .eq. 0) pad_1x_hi_num=13 
+	if (pad_2x_hi_num .eq. 0) pad_2x_hi_num=14
 
 C DJG: Ugly hack! This must come before the test on doing_pion
 	if(doing_pion .and. doing_semi) then
@@ -992,6 +1000,10 @@ C DJG:
 	ierr = regparmdouble('SPedge%p%yptar%max',SPedge%p%yptar%max,0)
 	ierr = regparmdouble('SPedge%p%xptar%min',SPedge%p%xptar%min,0)
 	ierr = regparmdouble('SPedge%p%xptar%max',SPedge%p%xptar%max,0)
+	ierr = regparmint('shms_pad_1x_lo_num',pad_1x_lo_num,0)
+	ierr = regparmint('shms_pad_1x_hi_num',pad_1x_hi_num,0)
+	ierr = regparmint('shms_pad_2x_lo_num',pad_2x_lo_num,0)
+	ierr = regparmint('shms_pad_2x_hi_num',pad_2x_hi_num,0)
 
 	if (debug(2)) write(6,*)'regallvars: ending'
 	return
