@@ -25,6 +25,7 @@ c
       THE = 180/pi*acos(1-Q2/2/EIMEV/EFMEV)
       TH=180-THCM_P*180/pi
       PHI=180+PHICM_P*180/pi
+      if (PHI .gt. 360) PHI=PHI-360
 c
       call DFTOT(EIMEV,EFMEV,THE,TH,PHI,S5FOLD)
 c
@@ -39,7 +40,7 @@ c
       pundet_cm	= sqrt(e_undet**2 - undetmass*undetmass)
       pdet_cm       = pundet_cm
       E_det_cm      = sqrt(detmass*detmass + pdet_cm**2)
-      cthcm_det     = cos(thcm_p*180/pi)
+      cthcm_det     = cos(thcm_p)
       sthcm_det     = sqrt(1 - cthcm_det*cthcm_det)
       pdet_cm_perp  = pdet_cm* sthcm_det
       pdet_cm_para  = pdet_cm* cthcm_det
