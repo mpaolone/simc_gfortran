@@ -16,6 +16,10 @@ C----------------------------------------------------------------------
 	include '../shms/hut.inc'
 
 C Math constants
+c
+	integer hit_s1x,hit_s1y,hit_s2x,hit_s2y
+
+c
 
 	real*8 pi,d_r,r_d,root
 
@@ -26,7 +30,7 @@ C Math constants
 
 	logical*4 cer_flag
 	logical*4 vac_flag
-        parameter (cer_flag = .true.) ! TRUE means 1st Cerenkov (Ar/Ne) is in front of chambers
+        parameter (cer_flag = .false.) ! TRUE means 1st Cerenkov (Ar/Ne) is in front of chambers
         parameter (vac_flag = .false.) ! FALSE means helium bag replaces 1st Cerenkov (Ar/Ne) 
 
 c	common /hutflag/ cer_flag,vac_flag
@@ -298,30 +302,19 @@ C at last cathode foil of second drift chamber set, drift to the 1st hodoscope
 	if(ms_flag) call musc_ext(m2,p,radw,drift,dydzs,dxdzs,ys,xs)
 c add cut on the hodoscope paddles for VCS paddle 1 at -45
         pscin_1x_spacing = 7.5
-        pscin_1x_center= -45.0 
+        pscin_1x_center= -45.0
         pscin_1x_size = 8.0
         xs_lo =  pscin_1x_center+pscin_1x_spacing*(pad_1x_lo_num-1)
      >      -pscin_1x_size/2.
         xs_hi =  pscin_1x_center+pscin_1x_spacing*(pad_1x_hi_num-1)
      >      +pscin_1x_size/2.
+	hit_s1x = 1
 	if ( ys.gt.(hscin_1x_left+hscin_1y_offset) .or.
      >      ys.lt.(hscin_1x_right+hscin_1y_offset) .or.
      >       xs .gt. xs_hi .or. xs .lt. xs_lo) then
-	  shmsSTOP_s1 = shmsSTOP_s1 + 1
-	  if (use_det_cut) then
-	     stop_id=20
-	     goto 500
-	  endif
+	hit_s1x = 0	 
 	endif
 c
-	if (ys.gt.(hscin_1x_left+hscin_1y_offset) .or.
-     >      ys.lt.(hscin_1x_right+hscin_1y_offset)) then
-	  shmsSTOP_s1 = shmsSTOP_s1 + 1
-	  if (use_det_cut) then
-	     stop_id=20
-	     goto 500
-	  endif
-	endif
         spec(44)=ys
 	radw = hscin_1x_thick/hscin_radlen
 	if(ms_flag) call musc(m2,p,radw,dydzs,dxdzs)
@@ -329,13 +322,10 @@ c
 	radw = drift/hair_radlen
 	call project(xs,ys,drift,decay_flag,dflag,m2,p,pathlen)
 	if(ms_flag) call musc_ext(m2,p,radw,drift,dydzs,dxdzs,ys,xs)
+	hit_s1y=1
 	if (xs.gt.(hscin_1y_bot+hscin_1x_offset) .or.
      >      xs.lt.(hscin_1y_top+hscin_1x_offset)) then
-	  shmsSTOP_s1 = shmsSTOP_s1 + 1
-	  if (use_det_cut) then
-	     stop_id=21
-	     goto 500
-	  endif
+	hit_s1y=0
 	endif
         spec(43)=xs
  	radw = hscin_1y_thick/hscin_radlen
@@ -375,31 +365,21 @@ C drift to 2nd hodoscope
 	radw = drift/hair_radlen
 	call project(xs,ys,drift,decay_flag,dflag,m2,p,pathlen)
 	if(ms_flag) call musc_ext(m2,p,radw,drift,dydzs,dxdzs,ys,xs)
-c add cut on the hodoscope paddles for VCS paddle 1 at -45
-        pscin_2x_center= -61.75
+c add cut on the hodoscope paddles
+        pscin_2x_center= -61.75 
         pscin_2x_size = 10.0
         pscin_2x_spacing = 9.5
         xs_lo =  pscin_2x_center+pscin_2x_spacing*(pad_2x_lo_num-1)
-     >      -pscin_1x_size/2.
+     >      -pscin_2x_size/2.
         xs_hi =  pscin_2x_center+pscin_2x_spacing*(pad_2x_hi_num-1)
+     >      +pscin_2x_size/2.
+	hit_s2x=1
 	if (ys.gt.(hscin_2x_left+hscin_2y_offset) .or.
      >      ys.lt.(hscin_2x_right+hscin_2y_offset) .or.
      >  xs .gt. xs_hi .or. xs .lt. xs_lo) then
-	  shmsSTOP_s3 = shmsSTOP_s3 + 1
-	  if (use_det_cut) then
-	     stop_id = 22
-	     goto 500
-	  endif
+	hit_s2x=0
 	endif
 c
-	if (ys.gt.(hscin_2x_left+hscin_2y_offset) .or.
-     >      ys.lt.(hscin_2x_right+hscin_2y_offset)) then
-	  shmsSTOP_s3 = shmsSTOP_s3 + 1
-	  if (use_det_cut) then
-	     stop_id = 22
-	     goto 500
-	  endif
-	endif
         spec(46)=ys
 	radw = hscin_2x_thick/hscin_radlen
 	if(ms_flag) call musc(m2,p,radw,dydzs,dxdzs)
@@ -407,14 +387,19 @@ c
 	radw = drift/hair_radlen
 	call project(xs,ys,drift,decay_flag,dflag,m2,p,pathlen)
 	if(ms_flag) call musc_ext(m2,p,radw,drift,dydzs,dxdzs,ys,xs)
+	hit_s2y=1
 	if (xs.gt.(hscin_2y_bot+hscin_2x_offset) .or.
      >      xs.lt.(hscin_2y_top+hscin_2x_offset)) then
-	  shmsSTOP_s2 = shmsSTOP_s2 + 1
-	  if (use_det_cut) then
+            hit_s2y=0
+	endif
+c
+         if (use_det_cut 
+     >     .and. ( (hit_s1x+hit_s1y+hit_s2x+hit_s2y) .ge.3 )) then
 	     stop_id=23
 	     goto 500
 	  endif
-	endif
+
+c	
         spec(45)=xs
 	radw = hscin_2y_thick/hscin_radlen
 	if(ms_flag) call musc(m2,p,radw,dydzs,dxdzs)
