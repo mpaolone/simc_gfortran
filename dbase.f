@@ -170,6 +170,7 @@ C DJG:
 
 	else if (doing_delta) then
 	  Mh=Mp
+	  if ( abs(mrecoil-939.56) .le. 10) Mh=mpi
 	  if (nint(targ%A).ge.2) 
      >      write(6,*) 'WARNING: Delta cross section model only set up for proton target!'
 	  doing_hyddelta = (nint(targ%A).eq.1)
@@ -282,7 +283,7 @@ C DJG:
 	  sign_hadron=1.0
 	else if (doing_delta) then		!Strike (and detect) proton, pion 'recoil'
 	  targ%Mtar_struck = Mp
-	  targ%Mrec_struck = 134.96
+	  targ%Mrec_struck = Mrecoil
 	  sign_hadron=1.0
 	else if(doing_semi) then         ! For now, just assuming proton mass
 	   targ%Mtar_struck = Mp
@@ -890,6 +891,7 @@ C DJG:
 	ierr = regparmint('doing_rho',doing_rho,0)
 	ierr = regparmint('doing_decay',doing_decay,0)
 	ierr = regparmdouble('ctau',ctau,0)
+	ierr = regparmdouble('Mrecoil',Mrecoil,0)
 
 *	DEBUG
 

@@ -29,12 +29,12 @@
 ! declare structures arm and arm2 first
         type arm
                 sequence
-		real*8		delta, yptar, xptar, z
+		real*8		delta, yptar, xptar, z,x
 	end type 		
 
         type arm2
                 sequence
-		real*8		delta, yptar, xptar, z
+		real*8		delta, yptar, xptar, z,x
 	end type 		
 
 
@@ -96,10 +96,10 @@
 
 ! ... full description of a given particle
 	integer*4 narm_fullfields
-	parameter (narm_fullfields = 8)
+	parameter (narm_fullfields = 9)
 	type arm_full
                 sequence
-		real*8	delta,xptar,yptar,z
+		real*8	delta,xptar,yptar,z,x
 		real*8	theta,phi,E,P
 	end type
 

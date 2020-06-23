@@ -42,6 +42,7 @@
 
 	real*8	Mh, Mh2, Mh2_final	!mh,mh2 are INITIAL hadron mass(**2)
 	real*8	Ebeam, dEbeam, Ebeam_vertex_ave, genvol, genvol_inclusive
+	real*8 Mrecoil
 	real*8	luminosity, targetfac, normfac
 	real*8	wtcontribute, dE_edge_test, Egamma_gen_max
 	real*8  pt_b_param,sigc_kin_min,sigc_kin_max,sigc_kin_ind
@@ -79,7 +80,7 @@
 	integer*4 random_seed
 
 
-	common /gnrl/   Mh, Mh2, Mh2_final, Ebeam, dEbeam, Ebeam_vertex_ave,
+	common /gnrl/   Mrecoil,Mh, Mh2, Mh2_final, Ebeam, dEbeam, Ebeam_vertex_ave,
      >    genvol, genvol_inclusive, luminosity, targetfac,
      >    normfac, wtcontribute, dE_edge_test, Egamma_gen_max,pt_b_param,
      >    sigc_kin_min,sigc_kin_max,sigc_kin_ind,targ_Bangle, targ_Bphi, targ_pol, 
@@ -149,7 +150,7 @@ C Structure for variables that we want to available to the ntuple.
 		real*8 radphot, radarm
 		real*8 resfac
 		real*8 sigcm
-		real*8 krel,mm,mmA,t,dilu
+		real*8 krel,mm,mmA,t,dilu,mm2
 		real*8 sigcm1, sigcm2, sigcm3, sigcm4
 		real*8 xfermi, yfermi
 		real*8 rhomass, rhotheta

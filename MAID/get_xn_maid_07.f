@@ -6,9 +6,10 @@ C ----------------------------------------------------------------------
 c
 
       subroutine get_xn_maid_07(Q2,W,EIMEV,EFMEV,THCM_P,PHICM_P
-     >  ,SIGLAB,SIGCM)
+     >  ,SIGLAB,SIGCM,IREACT)
 c
       implicit none 
+      integer ireact
       real*8 tarmass,undetmass,detmass
       real*8 omega_lab,qvec_lab,beta,gamma,e_undet
       real*8 pundet_cm,pdet_cm,E_det_cm,cthcm_det,sthcm_det
@@ -26,12 +27,21 @@ c
       TH=180-THCM_P*180/pi
       PHI=180+PHICM_P*180/pi
       if (PHI .gt. 360) PHI=PHI-360
+c    
+c       PRINT *, 'channel  1 - pi0 p; 2 - pi0 n; 3 - pi+ n; 4 - pi- p'
+c   IREACT =1 pi0 p, =3 pi+ n;
 c
-      call DFTOT(EIMEV,EFMEV,THE,TH,PHI,S5FOLD)
+      call DFTOT(EIMEV,EFMEV,THE,TH,PHI,S5FOLD,IREACT)
 c
        tarmass = 938.27
+       if (ireact .eq. 1) then
        undetmass =134.98 ! undetected particle mass
        detmass = 938.27  ! detected particle mass
+       endif
+       if (ireact .eq. 3) then
+       undetmass =939.565 ! undetected particle mass
+       detmass = 139.57  ! detected particle mass
+       endif
       omega_lab   = (Q2 + W*W - tarmass*tarmass) / (2.*tarmass)
       qvec_lab    = sqrt( Q2 + omega_lab**2)
       beta        = qvec_lab / (tarmass + omega_lab)
@@ -71,9 +81,10 @@ c
       end
 C ----------------------------------------------------------------------
 C ----------------------------------------------------------------------
-      subroutine DFTOT(EIMEV,EFMEV,THE,TH,PHI,S5FOLD)
+      subroutine DFTOT(EIMEV,EFMEV,THE,TH,PHI,S5FOLD,IREACT)
       IMPLICIT REAL*8 (A-H,O-Z)
       real*8 xx(100)
+      Integer ireact
       CHARACTER VAR*11, UNIT*10, TEXT*64
       CHARACTER*10 MODEL(16)
       CHARACTER*20 SOLUTION
@@ -107,7 +118,7 @@ c
        Solution="maid07_final"
        ISOL=1
 c       PRINT *, 'channel  1 - pi0 p; 2 - pi0 n; 3 - pi+ n; 4 - pi- p'
-       ISO=1
+       ISO=ireact
 C ******************************
         GO TO (31,32,33,34) ISO
 

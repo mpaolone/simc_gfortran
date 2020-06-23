@@ -476,7 +476,6 @@ C DJG spectrometer
 	logical delta_sol1,delta_sol2
 	real*8 W2
 	real*8 grnd		!random # generator.
-
 	logical success
 	real*8 gamma_cm,beta_cm,cost,e_p_cm,p_p_cm,plong
 c
@@ -631,7 +630,7 @@ c	  endif
 	  vertex%Pm = pfer	!vertex%Em generated at beginning.
 	  vertex%Mrec = targ%M - targ%Mtar_struck + vertex%Em
          if ( doing_delta .and. prod_in_cm ) then
-	      call calc_kin_in_cm(134.98,vertex%thetacm,vertex%phicm,vertex%e%E,vertex%Ein,vertex%e%theta,
+	      call calc_kin_in_cm(mrecoil,vertex%thetacm,vertex%phicm,vertex%e%E,vertex%Ein,vertex%e%theta,
      >          vertex%e%phi,vertex%p%E,vertex%p%P,vertex%p%theta,vertex%p%phi,calc_thpq_ok)
 	     vertex%p%delta = 100.*(vertex%p%P-spec%p%P)/spec%p%P
 	      if ( .not. calc_thpq_ok ) return
@@ -806,6 +805,13 @@ c	    endif
 	  py =  vertex%up%x
 	  pz =  vertex%up%z
 
+c	  qx =  vertex%uq%x		!convert to 'replay' coord. systemc
+c	  qy =  vertex%uq%y
+c	  qz =  vertex%uq%z
+c	  px =  vertex%up%x
+c	  py =  vertex%up%y
+c	  pz =  vertex%up%z
+
 	  dummy=sqrt((qx**2+qy**2)*(qx**2+qy**2+qz**2))
 	  new_x_x = -qx*qz/dummy
 	  new_x_y = -qy*qz/dummy
@@ -820,6 +826,15 @@ c	    endif
 	  p_new_y = px*new_y_x + py*new_y_y + pz*new_y_z
 
 	  main%phi_pq = atan2(p_new_y,p_new_x)		!atan2(y,x)=atan(y/x)
+c atan2 is principal value of p_new_x + i * p_new_y
+c  atan2 is from 0 to pi/2 when p_new_y>0,p_new_x>0
+c  atan2 is from pi/2 to pi when p_new_y>0,p_new_x<0
+c  atan2 is from 0 to -pi/2 when p_new_y<0,p_new_x>0
+c  atan2 is from -pi/2 to -pi when p_new_y<0,p_new_x<0
+c   atan2 = 0 if p_new_y==0 p_new_x>0
+c   atan2 = pi if p_new_y==0 p_new_x<0
+c   atan2 = pi/2 if p_new_x=0
+c
 	  if (main%phi_pq.lt.0.e0) main%phi_pq=main%phi_pq+2.*pi
 	  if ( .not. prod_in_cm) vertex%phicm = main%phi_pq
 !	  if (p_new_y.lt.0.) then
@@ -1369,6 +1384,7 @@ c
         z_p(2) = recon%p%P*tempang*(p_dy_tmp*spec%p%cos_th-spec%p%sin_th)
 	z_p(3) = recon%p%P*tempang*(p_dy_tmp*spec%p%sin_th+spec%p%cos_th)
 	z_p(4) = recon%p%e
+	call crossm(z_q,z_b,tnorm)
 	if ( vdotm(tnorm,z_p,3) .ge. 0) then
 	   recon%phicm = vangle(z_q,z_b,z_q,z_p)
 	else
@@ -1427,6 +1443,7 @@ c
           t = recon%Q2 - Mh2
      >      + 2*(recon%nu*recon%p%E - recon%p%P*recon%q*cos(recon%theta_pq))
 	  ntup%mm = mm
+	  ntup%mm2 = mm2
 	  ntup%mmA = mmA
 	  ntup%t = t
 c
@@ -1479,6 +1496,7 @@ c
 	real*8		a, b, r, frac, peepi, peeK, peedelta, peerho, peepiX
 	real*8		survivalprob, semi_dilution
 	real*8		weight, width, sigep, deForest, tgtweight
+	integer ireact
 	logical		force_sigcc, success
          logical prod_in_cm
          common /cm_logical/  prod_in_cm
@@ -1588,7 +1606,16 @@ c
 c	  main%sigcc = peedelta(vertex,main)	!Need new xsec model.
 	   if (debug(2)) write(*,*) " call before maid = " ,main%q2,main%w,vertex%Ein,vertex%e%E,vertex%thetacm,vertex%phicm
 	   if ( main%w  >1073.2365 ) then
-	  call  get_xn_maid_07(main%q2,main%w,vertex%Ein,vertex%e%E,vertex%thetacm,vertex%phicm,main%sigcc,ntup%sigcm)
+	      ireact=1 ! pi0 p
+	      if (abs(mrecoil-939.57) <10 ) ireact=3
+	      if (abs(mrecoil) <10 ) ireact=100
+	      
+	      if (main%w < 2000 .and. ireact .ne. 100) then
+                call  get_xn_maid_07(main%q2,main%w,vertex%Ein,vertex%e%E,vertex%thetacm,vertex%phicm,main%sigcc,ntup%sigcm,ireact)
+	      else
+		     main%sigcc=1.
+		     ntup%sigcm=1.
+              endif
            endif
 	  main%sigcc_recon = 1.0
 
