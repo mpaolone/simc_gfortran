@@ -126,7 +126,7 @@
 	  m = m+1
 	  NtupleTag(m) = 'Eb_ver'	! 48
 	  m = m+1
-	  NtupleTag(m) = 'Xtar'	! 49
+	  NtupleTag(m) = 'E_ver'	! 49
 	  m = m+1
 	  NtupleTag(m) = 'Q2i'		! 50
 	  m = m+1
