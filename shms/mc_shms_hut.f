@@ -308,11 +308,11 @@ c add cut on the hodoscope paddles for VCS paddle 1 at -45
      >      -pscin_1x_size/2.
         xs_hi =  pscin_1x_center+pscin_1x_spacing*(pad_1x_hi_num-1)
      >      +pscin_1x_size/2.
-	hit_s1x = 1
-	if ( ys.gt.(hscin_1x_left+hscin_1y_offset) .or.
-     >      ys.lt.(hscin_1x_right+hscin_1y_offset) .or.
-     >       xs .gt. xs_hi .or. xs .lt. xs_lo) then
 	hit_s1x = 0	 
+	if ( ys.le.(hscin_1x_left+hscin_1y_offset) .and.
+     >      ys.ge.(hscin_1x_right+hscin_1y_offset) .and.
+     >       xs .le. xs_hi .and. xs .ge. xs_lo) then
+	      hit_s1x = 1
 	endif
 c
         spec(44)=ys
@@ -322,10 +322,10 @@ c
 	radw = drift/hair_radlen
 	call project(xs,ys,drift,decay_flag,dflag,m2,p,pathlen)
 	if(ms_flag) call musc_ext(m2,p,radw,drift,dydzs,dxdzs,ys,xs)
-	hit_s1y=1
-	if (xs.gt.(hscin_1y_bot+hscin_1x_offset) .or.
-     >      xs.lt.(hscin_1y_top+hscin_1x_offset)) then
 	hit_s1y=0
+	if (xs.le.(hscin_1y_bot+hscin_1x_offset) .or.
+     >      xs.ge.(hscin_1y_top+hscin_1x_offset)) then
+	    hit_s1y=1
 	endif
         spec(43)=xs
  	radw = hscin_1y_thick/hscin_radlen
@@ -367,17 +367,17 @@ C drift to 2nd hodoscope
 	if(ms_flag) call musc_ext(m2,p,radw,drift,dydzs,dxdzs,ys,xs)
 c add cut on the hodoscope paddles
         pscin_2x_center= -61.75 
-        pscin_2x_size = 10.0
+        pscin_2x_size = 10.0 
         pscin_2x_spacing = 9.5
         xs_lo =  pscin_2x_center+pscin_2x_spacing*(pad_2x_lo_num-1)
      >      -pscin_2x_size/2.
         xs_hi =  pscin_2x_center+pscin_2x_spacing*(pad_2x_hi_num-1)
      >      +pscin_2x_size/2.
-	hit_s2x=1
-	if (ys.gt.(hscin_2x_left+hscin_2y_offset) .or.
-     >      ys.lt.(hscin_2x_right+hscin_2y_offset) .or.
-     >  xs .gt. xs_hi .or. xs .lt. xs_lo) then
 	hit_s2x=0
+	if (ys.le.(hscin_2x_left+hscin_2y_offset) .and.
+     >      ys.ge.(hscin_2x_right+hscin_2y_offset) .and.
+     >  xs .le. xs_hi .and. xs .ge. xs_lo) then
+	hit_s2x=1
 	endif
 c
         spec(46)=ys
@@ -387,14 +387,14 @@ c
 	radw = drift/hair_radlen
 	call project(xs,ys,drift,decay_flag,dflag,m2,p,pathlen)
 	if(ms_flag) call musc_ext(m2,p,radw,drift,dydzs,dxdzs,ys,xs)
-	hit_s2y=1
-	if (xs.gt.(hscin_2y_bot+hscin_2x_offset) .or.
-     >      xs.lt.(hscin_2y_top+hscin_2x_offset)) then
-            hit_s2y=0
+	hit_s2y=0
+	if (xs.le.(hscin_2y_bot+hscin_2x_offset) .and.
+     >      xs.ge.(hscin_2y_top+hscin_2x_offset)) then
+            hit_s2y=1
 	endif
 c
          if (use_det_cut 
-     >     .and. ( (hit_s1x+hit_s1y+hit_s2x+hit_s2y) .ge.3 )) then
+     >     .and. ( (hit_s1x+hit_s1y+hit_s2x+hit_s2y) .lt. 3 )) then
 	     stop_id=23
 	     goto 500
 	  endif
