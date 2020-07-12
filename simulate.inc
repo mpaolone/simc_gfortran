@@ -73,7 +73,7 @@
 	logical using_cit_generation, using_Coulomb, using_Eloss
 	logical correct_Eloss, correct_raster,do_fermi
 	logical using_tgt_field
-	integer*4 electron_arm, hadron_arm, use_first_cer
+	integer*4 electron_arm, hadron_arm, use_first_cer,doing_prod_in_cm
 	real*8 transparency
 	logical use_benhar_sf
 	character*80 random_state_file
@@ -95,7 +95,7 @@
      >    doing_semipi, doing_semika, doing_hplus, which_kaon,
      >    which_pion, using_cit_generation, using_Coulomb, using_Eloss,
      >    correct_Eloss, correct_raster, do_fermi,using_tgt_field,
-     >    electron_arm, hadron_arm, use_first_cer,
+     >    electron_arm, hadron_arm, use_first_cer,doing_prod_in_cm,
      >    transparency, use_benhar_sf, random_state_file, random_seed
 
 ! ........ note: make these first two parameters at least ONE BIGGER than the actual dimensions you want to read in

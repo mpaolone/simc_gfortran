@@ -44,7 +44,7 @@
 c
          logical prod_in_cm
          common /cm_logical/  prod_in_cm
-         data prod_in_cm / .false. /
+c         data prod_in_cm / .false. /
 c 
 
 ! INITIALIZE

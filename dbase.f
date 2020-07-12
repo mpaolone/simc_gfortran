@@ -40,6 +40,8 @@
 	real*8 dum1,dum2,dum3,dum4,dum5,dum6,dum7
 	real*8 mrec_guess
 
+         logical prod_in_cm
+         common /cm_logical/  prod_in_cm
 
 	integer*4 iread, iq2, iang
 	integer*4 i, j, k, ii
@@ -111,7 +113,15 @@ c
 	if (pad_2x_lo_num .eq. 0) pad_2x_lo_num=1 
 	if (pad_1x_hi_num .eq. 0) pad_1x_hi_num=13 
 	if (pad_2x_hi_num .eq. 0) pad_2x_hi_num=14
-
+c
+	if (doing_prod_in_cm .eq. 1 ) then
+	      write(*,*) " Production in cm frame"
+	      prod_in_cm = .true.
+	   else
+	      prod_in_cm = .false.
+	      write(*,*) " Production in lab frame"
+	      
+	   endif
 C DJG: Ugly hack! This must come before the test on doing_pion
 	if(doing_pion .and. doing_semi) then
 	   doing_semipi=.true.
@@ -890,6 +900,7 @@ C DJG:
 	ierr = regparmint('doing_hplus', doing_hplus,1)
 	ierr = regparmint('doing_rho',doing_rho,0)
 	ierr = regparmint('doing_decay',doing_decay,0)
+	ierr = regparmint('doing_prod_in_cm',doing_prod_in_cm,0)
 	ierr = regparmdouble('ctau',ctau,0)
 	ierr = regparmdouble('Mrecoil',Mrecoil,0)
 
