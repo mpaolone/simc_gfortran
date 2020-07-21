@@ -153,6 +153,9 @@ c	  ntu(43) = pfer/1000.*abs(dummy)/dummy		!p_fermi - GeV/c
 	  ntu(51) = main%w/1.e3
 	  ntu(52) = (vertex%Emiss*vertex%Emiss-vertex%Pmiss*vertex%Pmiss)/1.e6
 	  ntu(53) = main%phi_pq
+	  ntu(54) = main%target%Eloss(1)
+	  ntu(55) = main%target%Eloss(2)
+	  ntu(56) = main%target%Eloss(3)
 	  if(using_tgt_field) then
 	     ntu(54) = recon%theta_tarq
 	     ntu(55) = recon%phi_targ

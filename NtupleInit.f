@@ -135,6 +135,12 @@
 	  NtupleTag(m) = 'MM2i'		! 52
 	  m = m+1
 	  NtupleTag(m) = 'phipqi'	! 53
+	  m = m+1
+	  NtupleTag(m) = 'EbEloss'	! 54
+	  m = m+1
+	  NtupleTag(m) = 'EeEloss'	! 55
+	  m = m+1
+	  NtupleTag(m) = 'EpEloss'	! 56
 	  if(using_tgt_field) then
 	     m = m+1
 	     NtupleTag(m) = 'th_tarq' ! 54
