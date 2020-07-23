@@ -1496,6 +1496,7 @@ c
 	real*8		a, b, r, frac, peepi, peeK, peedelta, peerho, peepiX
 	real*8		survivalprob, semi_dilution
 	real*8		weight, width, sigep, deForest, tgtweight
+	real*8    sigMott
 	integer ireact
 	logical		force_sigcc, success
          logical prod_in_cm
@@ -1613,7 +1614,9 @@ c	  main%sigcc = peedelta(vertex,main)	!Need new xsec model.
 	      if (main%w < 2000 .and. ireact .ne. 100) then
                 call  get_xn_maid_07(main%q2,main%w,vertex%Ein,vertex%e%E,vertex%thetacm,vertex%phicm,main%sigcc,ntup%sigcm,ireact)
 	      else
-		     main%sigcc=1.
+		 call get_xn_vcs(vcs_xs_file,main%q2,main%w,vertex%Ein/1000.
+     > ,vertex%e%E/1000.,vertex%e%theta,vertex%thetacm,vertex%phicm,main%sigcc)
+		     main%sigcc=main%sigcc*sigMott(vertex%e%E,vertex%e%theta,main%q2)
 		     ntup%sigcm=1.
               endif
            endif

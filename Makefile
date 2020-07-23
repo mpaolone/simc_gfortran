@@ -19,7 +19,7 @@ Csoft = /home/huberg/r2d2/simc/
 ## THE REST SHOULD BE OK WITHOUT MODIFICATION.
 
 ## This tells make not to delete these target files on error/interrupt (see man page)
-.PRECIOUS: *.o sos/*.o hms/*.o hrsl/*.o hrsr/*.o shms/*.o calo/*.o
+.PRECIOUS: *.o sos/*.o hms/*.o hrsl/*.o hrsr/*.o shms/*.o calo/*.o MAID/*.o VCS/*.o
 
 RM        = rm -f 
 SHELL     = /bin/sh
@@ -32,6 +32,7 @@ SH	= $(simcdir)/shms/
 T       = $(simcdir)/cteq5/
 C       = $(simcdir)/calo/
 M       = $(simcdir)/MAID/
+V       = $(simcdir)/VCS_XS/
 
 OBJ1	= target.o brem.o gauss1.o NtupleInit.o NtupleClose.o enerloss_new.o
 OBJ2	= radc.o init.o dbase.o physics_kaon.o physics_pion.o physics_delta.o physics_proton.o loren.o sf_lookup.o
@@ -47,7 +48,8 @@ OBJB	= $(SH)mc_shms.o $(SH)mc_shms_hut.o $(SH)mc_shms_recon.o
 OBJC    = $(T)Ctq5Pdf.o
 OBJD    = $(C)mc_calo.o $(C)mc_calo_recon.o
 OBJE    = $(M)get_xn_maid_07.o
-my_objs	=  $(OBJ1) $(OBJ2) $(OBJ3) $(OBJ4) $(OBJ5) $(OBJ6) $(OBJ7) $(OBJ8) $(OBJ9) $(OBJA) $(OBJB) $(OBJC) $(OBJD) $(OBJE)
+OBJF    = $(V)vcs_xn.o
+my_objs	=  $(OBJ1) $(OBJ2) $(OBJ3) $(OBJ4) $(OBJ5) $(OBJ6) $(OBJ7) $(OBJ8) $(OBJ9) $(OBJA) $(OBJB) $(OBJC) $(OBJD) $(OBJE) $(OBJF)
 
 my_deps = $(my_objs:.o=.d)
 
@@ -166,8 +168,8 @@ CTP/O.Linux/Linux/lib/libctp.a:
 
 
 clean:
-	$(RM) *.[od] $(H)*.[od] $(S)*.[od] $(L)*.[od] $(R)*.[od] $(SH)*.[od] $(A)*.[od] $(T)*.[od] $(C)*.[od] $(M)*.[od] simc
+	$(RM) *.[od] $(H)*.[od] $(S)*.[od] $(L)*.[od] $(R)*.[od] $(SH)*.[od] $(A)*.[od] $(T)*.[od] $(C)*.[od] $(M)*.[od] $(V)*.[od] simc
 
 real_clean:
-	$(RM) *.[od] $(H)*.[od] $(S)*.[od] $(L)*.[od] $(R)*.[od] $(SH)*.[od] $(A)*.[od] $(T)*.[od] $(C)*.[od] $(M)*.[od] simc
+	$(RM) *.[od] $(H)*.[od] $(S)*.[od] $(L)*.[od] $(R)*.[od] $(SH)*.[od] $(A)*.[od] $(T)*.[od] $(C)*.[od] $(M)*.[od] $(V)*.[od] simc
 	rm -r CTP/O.$(MYOS)

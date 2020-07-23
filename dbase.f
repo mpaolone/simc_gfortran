@@ -885,6 +885,7 @@ C DJG:
 	ierr = regparmstring('extra_dbase_file',extra_dbase_file,0)
 	ierr = regparmstring('random_state_file',random_state_file,0)
 	ierr = regparmint('random_seed',random_seed,0)
+	ierr = regparmstring('vcs_xs_file',vcs_xs_file,0)
 
 *	EXPERIMENT
 
