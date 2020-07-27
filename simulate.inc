@@ -64,6 +64,7 @@
 	character base*40
 	character extra_dbase_file*60
 	character tgt_field_file*60
+	character vcs_xs_file*5
 	logical using_E_arm_montecarlo, using_P_arm_montecarlo
 	logical doing_phsp, using_rad, hard_cuts
 	logical doing_hyd_elast, doing_deuterium, doing_heavy
@@ -96,7 +97,7 @@
      >    which_pion, using_cit_generation, using_Coulomb, using_Eloss,
      >    correct_Eloss, correct_raster, do_fermi,using_tgt_field,
      >    electron_arm, hadron_arm, use_first_cer,doing_prod_in_cm,
-     >    transparency, use_benhar_sf, random_state_file, random_seed
+     >    transparency, use_benhar_sf, random_state_file, random_seed,vcs_xs_file
 
 ! ........ note: make these first two parameters at least ONE BIGGER than the actual dimensions you want to read in
 	integer*4 ntheorymax,nrhoPmmax
