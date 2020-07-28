@@ -1,9 +1,9 @@
-      subroutine get_xn_vcs(KINE,Q2,W,EIMEV,EFMEV,THETA_E,THCM_P,PHICM_P,SIGLAB)
+      subroutine get_xn_vcs(KINE,Q2,W,EIMEV,EFMEV,THETA_E,THCM_P,PHICM_P,SIGLAB,SIG)
 c
       implicit none
       character*5 kine   
       real*8 THETA_E,EIMEV,EFMEV,THCM_P,PHICM_P,THE,TH,PHI,Q2,W
-      real*8 SIGLAB
+      real*8 SIGLAB,SIG
       real*8 EB_LOW,EB_HI,EB_STEP
       real*8 Ee_LOW,Ee_HI,Ee_STEP
       real*8 Eth_LOW,Eth_HI,Eth_STEP
@@ -116,6 +116,8 @@ c
           nt4= ceiling((x(4)-thgg_LOW)/thgg_Step) 
           nt5= ceiling((x(5)-phgg_LOW)/phgg_Step) 
 c            write(*,*) nt1,nt2,nt3,nt4,nt5
+          siglab=0.
+          sig=-1.
            if ( nt1 .ge. 1 .and. nt1 .le. EB_NBIN .and.
      >   nt2 .ge. 1 .and. nt2 .le. Ee_NBIN .and.
      >   nt3 .ge. 1 .and. nt3 .le. Eth_NBIN .and.
@@ -130,9 +132,10 @@ c            write(*,*) nt1,nt2,nt3,nt4,nt5
 c             write(*,*) a(nt1),a(ntt2),a(ntt3),a(ntt4),a(ntt5),vcs_xs(nt1,nt2,nt3,nt4,nt5)
              else
 c                write(*,*) ' nt5,ntot = ',nt5,ntot
-                endif
+             endif
+           SIGLAB= fint(Nx,X,na,a,vcs_xs) 
+           sig = vcs_xs(nt1,nt2,nt3,nt4,nt5)
           endif
-         SIGLAB= fint(Nx,X,na,a,vcs_xs)
 c          write(*,*) Q2,W,x(1),x(2),x(3),x(4),x(5),siglab
 c
 c
