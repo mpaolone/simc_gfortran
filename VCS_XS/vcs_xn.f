@@ -17,7 +17,7 @@ c
       integer ntt1,ntt2,ntt3,ntt4,ntt5
       integer i,j,k,l,m
       parameter (Nx=5)
-      parameter (N1=7,N2=155,N3=39,N4=105,N5=36)
+      parameter (N1=8,N2=156,N3=40,N4=106,N5=37)
       integer NA(nx)
       real*4 X(Nx)
       real*4 A(N1+N2+N3+N4+N5)
@@ -49,14 +49,19 @@ c
            if (ios ==0) then
               write(*,*) ' Reading file ','VCS_XS/'//kine//'_binning.dat'
              read(chan,*) EB_LOW,EB_HI,EB_STEP,EB_NBIN
+             EB_nBIN= EB_nBin+1
              Na(1) = EB_NBIN
              read(chan,*) Ee_LOW,Ee_HI,Ee_STEP,Ee_NBIN
+             Ee_nBIN= Ee_nBin+1
              Na(2) = Ee_NBIN
              read(chan,*) Eth_LOW,Eth_HI,Eth_STEP,Eth_NBIN
+             Eth_nBIN= Eth_nBin+1
              Na(3) = Eth_NBIN
              read(chan,*) Thgg_LOW,Thgg_HI,Thgg_STEP,Thgg_NBIN
-             Na(4) = thgg_NBIN
+              thgg_nBIN= thgg_nBin+1
+            Na(4) = thgg_NBIN
              read(chan,*) Phgg_LOW,Phgg_HI,Phgg_STEP,Phgg_NBIN
+              phgg_nBIN= phgg_nBin+1
              Na(5) = phgg_NBIN
 	     close (unit=chan)
              ntot=1
@@ -97,6 +102,33 @@ c
             do l=1,thgg_NBIN
             do m=1,phgg_NBIN
                read(chan,*) d1,d2,d3,d4,d5,vcs_xs(i,j,k,l,m)
+c                  write(*,*) d1,d2,d3,d4,d5,vcs_xs(i,j,k,l,m)
+               if (abs(d5-(phgg_low + phgg_step*(m-1)))>phgg_step/2. ) then
+                  write(*,*) i,j,k,l,m,phgg_low + phgg_step*(m-1)
+                  write(*,*) d1,d2,d3,d4,d5,vcs_xs(i,j,k,l,m)
+                  stop
+                  endif
+               if (abs(d4-(thgg_low + thgg_step*(l-1)))>thgg_step/2. ) then
+                  write(*,*) i,j,k,l,m,thgg_low + thgg_step*(l-1)
+                  write(*,*) d1,d2,d3,d4,d5,vcs_xs(i,j,k,l,m)
+                  stop
+                  endif
+               
+               if (abs(d3-(Eth_low + Eth_step*(k-1)))>Eth_step/2. ) then
+                  write(*,*) i,j,k,l,m,Eth_low + Eth_step*(k-1)
+                  write(*,*) d1,d2,d3,d4,d5,vcs_xs(i,j,k,l,m)
+                  stop
+                  endif
+               if (abs(d2-(Ee_low + Ee_step*(j-1)))>Eth_step/2. ) then
+                  write(*,*) i,j,k,l,m,Ee_low + Ee_step*(j-1)
+                  write(*,*) d1,d2,d3,d4,d5,vcs_xs(i,j,k,l,m)
+                  stop
+                  endif
+               if (abs(d1-(EB_low + EB_step*(i-1)))>EB_step/2. ) then
+                  write(*,*) i,j,k,l,m,EB_low + EB_step*(i-1)
+                  write(*,*) d1,d2,d3,d4,d5,vcs_xs(i,j,k,l,m)
+                  stop
+                  endif
             enddo
             enddo
             enddo
@@ -118,6 +150,7 @@ c
 c            write(*,*) nt1,nt2,nt3,nt4,nt5
           siglab=0.
           sig=-1.
+c            write(*,*) Q2/1000000.,W/1000.,x(1),x(2),x(3),x(4),x(5)
            if ( nt1 .ge. 1 .and. nt1 .le. EB_NBIN .and.
      >   nt2 .ge. 1 .and. nt2 .le. Ee_NBIN .and.
      >   nt3 .ge. 1 .and. nt3 .le. Eth_NBIN .and.
@@ -128,15 +161,12 @@ c            write(*,*) nt1,nt2,nt3,nt4,nt5
              ntt3= nt3+EB_NBIN+Ee_NBIN
              ntt4= nt4+EB_NBIN+Ee_NBIN+Eth_NBIN
              ntt5= nt5+EB_NBIN+Ee_NBIN+Eth_NBIN+thgg_NBIN
-             if (nt5 .le. ntot) then
-c             write(*,*) a(nt1),a(ntt2),a(ntt3),a(ntt4),a(ntt5),vcs_xs(nt1,nt2,nt3,nt4,nt5)
-             else
-c                write(*,*) ' nt5,ntot = ',nt5,ntot
-             endif
-           SIGLAB= fint(Nx,X,na,a,vcs_xs) 
+           SIGLAB= fint(Nx,X,na,a,vcs_xs)/1000. ! 1/1000 to convert to 1/MeV
            sig = vcs_xs(nt1,nt2,nt3,nt4,nt5)
+c           write(*,*) a(nt1),a(ntt2),a(ntt3),a(ntt4),a(ntt5),sig,siglab*1000.
           endif
-c          write(*,*) Q2,W,x(1),x(2),x(3),x(4),x(5),siglab
+c          if (siglab .eq.0) write(*,*) ' siglab = 0',Q2,W,x(1),x(2),x(3),x(4),x(5),siglab
+c          write(*,*) '*****'
 c
 c
 c
