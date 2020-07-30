@@ -17,8 +17,11 @@ c
       integer ntt1,ntt2,ntt3,ntt4,ntt5
       integer i,j,k,l,m
       parameter (Nx=5)
-c      parameter (N1=8,N2=156,N3=40,N4=106,N5=37)
-      parameter (N1=8,N2=131,N3=40,N4=86,N5=37)
+      parameter (N1=8,N2=131,N3=40,N4=86,N5=37) ! kin1a
+c      parameter (N1=8,N2=145,N3=40,N4=101,N5=37) ! kin1b
+c      parameter (N1=8,N2=131,N3=40,N4=91,N5=37) ! kin2a
+c      parameter (N1=8,N2=149,N3=40,N4=106,N5=37) ! kin2b
+c      parameter (N1=8,N2=156,N3=40,N4=101,N5=37) ! kin3b
       integer NA(nx)
       real*4 X(Nx)
       real*4 A(N1+N2+N3+N4+N5)
