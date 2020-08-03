@@ -156,6 +156,7 @@ c	  ntu(43) = pfer/1000.*abs(dummy)/dummy		!p_fermi - GeV/c
 	  ntu(54) = main%target%Eloss(1)
 	  ntu(55) = main%target%Eloss(2)
 	  ntu(56) = main%target%Eloss(3)
+	  ntu(57) = main%target%z
 	  if(using_tgt_field) then
 	     ntu(54) = recon%theta_tarq
 	     ntu(55) = recon%phi_targ
