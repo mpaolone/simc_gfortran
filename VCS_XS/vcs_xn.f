@@ -11,6 +11,14 @@ c
       real*8 Phgg_LOW,Phgg_HI,Phgg_STEP
       integer*4 EB_NBIN,Ee_NBIN,Eth_NBIN,Thgg_NBIN,Phgg_NBIN
       integer ios
+c
+      real*8 tarmass,undetmass,detmass,pi
+      real*8 omega_lab,qvec_lab,beta,gamma,e_undet
+      real*8 pundet_cm,pdet_cm,E_det_cm,cthcm_det,sthcm_det
+      real*8 pdet_cm_perp,pdet_cm_para,E_det_lab
+      real*8 pdet_lab_para,pdet_lab_perp,pdet_lab
+      real*8 Jacobian,flux,K_gamma_lab,eps_d,enu
+
 c     
       integer nx,n1,n2,n3,n4,n5
       integer nt1,nt2,nt3,nt4,nt5
@@ -41,8 +49,8 @@ c
       PHI=180+PHICM_P*180/3.14159
       if (PHI .gt. 360) PHI=PHI-360
       if (PHI .gt. 180) PHI= 360-PHI
-      X(1) = EIMEV
-      X(2) = EFMEV
+      X(1) = EIMEV/1000.
+      X(2) = EFMEV/1000.
       X(3) = THE
       X(4) = TH
       X(5) = PHI
@@ -161,6 +169,38 @@ c
            
 	   firsttime = .false.
         endif
+c
+        pi=3.14159
+       tarmass = 938.27
+       undetmass =0.0 ! undetected particle mass
+       detmass = 938.27  ! detected particle mass
+      omega_lab   = (Q2 + W*W - tarmass*tarmass) / (2.*tarmass)
+      qvec_lab    = sqrt( Q2 + omega_lab**2)
+      beta        = qvec_lab / (tarmass + omega_lab)
+      gamma       = (tarmass + omega_lab) / W
+      e_undet	= (W*W - detmass*detmass + undetmass*undetmass)/2./W
+      pundet_cm	= sqrt(e_undet**2 - undetmass*undetmass)
+      pdet_cm       = pundet_cm
+      E_det_cm      = sqrt(detmass*detmass + pdet_cm**2)
+      cthcm_det     = cos(thcm_p)
+      sthcm_det     = sqrt(1 - cthcm_det*cthcm_det)
+      pdet_cm_perp  = pdet_cm* sthcm_det
+      pdet_cm_para  = pdet_cm* cthcm_det
+      E_det_lab     = gamma * (E_det_cm + beta*pdet_cm_para)
+      pdet_lab_para = gamma * (pdet_cm_para + beta*E_det_cm)
+      pdet_lab_perp = pdet_cm_perp
+      pdet_lab      = sqrt( pdet_lab_perp**2 + pdet_lab_para**2 )
+      Jacobian    = pdet_lab_para*pdet_cm_para + gamma*(pdet_lab_perp)**2
+      Jacobian    =  Jacobian*pdet_cm/(pdet_lab)**3
+      Jacobian    = 1.0 / abs(Jacobian)
+      enu=EIMEV-EFMEV
+	eps_d= 1d0/(1d0+2d0*(1+enu*enu/q2)*tan(0.5d0*the*pi/180)**2)
+c
+        K_gamma_lab = (W**2 -tarmass**2)/2./tarmass
+        flux = 7.297353080E-3/2./pi/pi*EFMEV/EIMEV*K_gamma_lab/Q2/(1.-eps_d)
+        
+c
+
           nt1= ceiling((x(1)-EB_LOW)/EB_Step) +1
           nt2= ceiling((x(2)-Ee_LOW)/Ee_Step) +1
           nt3= ceiling((x(3)-Eth_LOW)/Eth_Step) +1
@@ -180,8 +220,8 @@ c
              ntt3= nt3+EB_NBIN+Ee_NBIN
              ntt4= nt4+EB_NBIN+Ee_NBIN+Eth_NBIN
              ntt5= nt5+EB_NBIN+Ee_NBIN+Eth_NBIN+thgg_NBIN
-           SIGLAB= fint(Nx,X,na,a,vcs_xs)/1000. ! 1/1000 to convert to 1/MeV
-           sig = vcs_xs(nt1,nt2,nt3,nt4,nt5)
+           SIG= fint(Nx,X,na,a,vcs_xs)/1000. ! 1/1000 to convert to 1/MeV
+           siglab = sig*Jacobian
            if (debug)    write(*,'(5f10.5,2g10.5)') a(nt1),a(ntt2),a(ntt3),a(ntt4),a(ntt5),sig,siglab*1000.
          endif
          if (debug .and. siglab .eq.0) write(*,'(a,5f10.5,1x,g10.5)') ' siglab = 0',x(1),x(2),x(3),x(4),x(5),siglab

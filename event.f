@@ -1614,9 +1614,10 @@ c	  main%sigcc = peedelta(vertex,main)	!Need new xsec model.
 	      if (main%w < 2000 .and. ireact .ne. 100) then
                 call  get_xn_maid_07(main%q2,main%w,vertex%Ein,vertex%e%E,vertex%thetacm,vertex%phicm,main%sigcc,ntup%sigcm,ireact)
 	      else
-		 call get_xn_vcs(vcs_xs_file,main%q2,main%w,vertex%Ein/1000.
-     > ,vertex%e%E/1000.,vertex%e%theta,vertex%thetacm,vertex%phicm,main%sigcc,ntup%sigcm)
+		 call get_xn_vcs(vcs_xs_file,main%q2,main%w,vertex%Ein
+     > ,vertex%e%E,vertex%e%theta,vertex%thetacm,vertex%phicm,main%sigcc,ntup%sigcm)
 		     main%sigcc=main%sigcc*sigMott(vertex%e%E,vertex%e%theta,main%q2)
+		     ntup%sigcm=ntup%sigcm*sigMott(vertex%e%E,vertex%e%theta,main%q2)
               endif
            endif
 	  main%sigcc_recon = 1.0
