@@ -1332,7 +1332,8 @@ c	enddo
 	real*8 dx_tmp,dy_tmp
 
 	real*8 ctheta,stheta,phad,pelec
-	real*8 zhadron
+	real*8 zhadron,zelec,xtemp
+	common /reconz/ zhadron,zelec
 
 	real*8 zero
 	parameter (zero=0.0e0)	!double precision zero for subroutine calls
@@ -1545,6 +1546,13 @@ C DJG For spectrometers to the left of the beamline, need to pass ctheta,-stheta
 	recon%p%yptar = main%RECON%p%yptar
 	recon%p%xptar = main%RECON%p%xptar
 	recon%p%z = main%RECON%p%z
+             if (abs(spec%p%phi-pi/2) .le. 0.5) then ! SHMS = pi/2, HMS = 3pi/2
+	     xtemp = main%target%x*(cos(spec%p%theta) - recon%p%yptar*sin(spec%p%theta))
+	     zhadron = -(recon%p%z+spec%p%offset%y-xtemp)/(sin(spec%p%theta) - recon%p%yptar*cos(spec%p%theta)) ! recon.p.z is really ytgt
+	     else
+	     xtemp = main%target%x*(cos(spec%p%theta) + recon%p%yptar*sin(spec%p%theta))
+	     zhadron = -(recon%p%z+spec%p%offset%y-xtemp)/(-sin(spec%p%theta) - recon%p%yptar*cos(spec%p%theta)) ! recon.p.z is really ytgt
+	     endif
 	recon%p%P = spec%p%P*(1.+recon%p%delta/100.)
 	recon%p%E = sqrt(recon%p%P**2 + Mh2)
 	dx_tmp = recon%p%xptar + spec%p%offset%xptar
@@ -1740,6 +1748,13 @@ C DJG For spectrometers to the left of the beamline, need to pass ctheta,-stheta
 	recon%e%yptar = main%RECON%e%yptar
 	recon%e%xptar = main%RECON%e%xptar
 	recon%e%z = main%RECON%e%z
+             if (abs(spec%e%phi-pi/2) .lt. 0.5) then ! SHMS = pi/2, HMS = 3pi/2
+	     xtemp = main%target%x*(cos(spec%e%theta) - recon%e%yptar*sin(spec%e%theta))
+	     zelec = -(recon%e%z+spec%e%offset%y-xtemp)/(sin(spec%e%theta) - recon%e%yptar*cos(spec%e%theta)) ! recon.e.z is really ytgt
+	     else
+	     xtemp = main%target%x*(cos(spec%e%theta) + recon%e%yptar*sin(spec%e%theta))
+	     zelec = -(recon%e%z+spec%e%offset%y-xtemp)/(-sin(spec%e%theta) - recon%e%yptar*cos(spec%e%theta)) ! recon.e.z is really ytgt
+	     endif
 	recon%e%P = spec%e%P*(1.+recon%e%delta/100.)
 	recon%e%E = recon%e%P
 

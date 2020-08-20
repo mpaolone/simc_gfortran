@@ -19,6 +19,8 @@
 !local (e,e'pi/K) calculations:
 !	real*8 t		!t
 	real*8 dummy
+	real*8 zhadron,zelec
+	common /reconz/ zhadron,zelec
 
 	logical success
 
@@ -72,6 +74,7 @@
 	  ntu(10) = orig%e%yptar			!mr
 	  ntu(11) = orig%e%xptar			!mr
 	  ntu(12) = main%target%z*spec%e%sin_th
+	  ntu(58) = zelec
 	  ntu(13) = recon%p%delta
 	  ntu(14) = recon%p%yptar			!mr
 	  ntu(15) = recon%p%xptar			!mr
@@ -84,6 +87,7 @@
 	  ntu(22) = orig%p%yptar			!mr
 	  ntu(23) = orig%p%xptar			!mr
  	  ntu(24) = -main%target%z*spec%p%sin_th
+	  ntu(59) =zhadron
 	else if (electron_arm.eq.2 .or. electron_arm.eq.4 .or.
      >		 electron_arm.eq.5 .or. electron_arm.eq.6.or. electron_arm.eq.8) then  !e- = left.
 	  ntu(1) = recon%p%delta
@@ -101,6 +105,7 @@ c	  ntu(11) = vertex%p%xptar			!mr
 	  ntu(10) = orig%p%yptar			!mr
 	  ntu(11) = orig%p%xptar			!mr
 	  ntu(12) = main%target%z*spec%p%sin_th
+	  ntu(58) = zhadron
 	  ntu(13) = recon%e%delta
 	  ntu(14) = recon%e%yptar			!mr
 	  ntu(15) = recon%e%xptar			!mr
@@ -113,6 +118,7 @@ c	  ntu(11) = vertex%p%xptar			!mr
 	  ntu(22) = orig%e%yptar			!mr
 	  ntu(23) = orig%e%xptar			!mr
 	  ntu(24) = -main%target%z*spec%e%sin_th
+	  ntu(59) = zelec
 	else
 	  write (6,*) 'results_write not yet set up for your spectrometers.'
 	endif

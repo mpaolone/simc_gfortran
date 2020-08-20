@@ -142,7 +142,11 @@
 	  m = m+1
 	  NtupleTag(m) = 'EpEloss'	! 56
 	  m = m+1
-	  NtupleTag(m) = 'ssztari'	! 57
+	  NtupleTag(m) = 'ztari'	! 57
+	  m = m+1
+	  NtupleTag(m) = 'hsztar'	! 58
+	  m = m+1
+	  NtupleTag(m) = 'ssztar'	! 59
 	  if(using_tgt_field) then
 	     m = m+1
 	     NtupleTag(m) = 'th_tarq' ! 54
