@@ -266,6 +266,18 @@
 	  NtupleTag(m) = 'sigcc'	! 43
 	  m = m+1
 	  NtupleTag(m) = 'Weight'	! 44
+	  m = m+1
+	  NtupleTag(m) = 'EbEloss'	! 45
+	  m = m+1
+	  NtupleTag(m) = 'EeEloss'	! 46
+	  m = m+1
+	  NtupleTag(m) = 'EpEloss'	! 47
+	  m = m+1
+	  NtupleTag(m) = 'ztari'	! 48
+	  m = m+1
+	  NtupleTag(m) = 'hsztar'	! 49
+	  m = m+1
+	  NtupleTag(m) = 'ssztar'	! 50
 	endif
 
 !	else		!used to be the if (doing_phsp) option.

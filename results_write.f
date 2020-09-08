@@ -238,8 +238,20 @@ c	  ntu(43) = pfer/1000.*abs(dummy)/dummy		!p_fermi - GeV/c
 	  ntu(42) = ntup%radphot/1000.			!radphot - GeV
 	  ntu(43) = main%sigcc
 	  ntu(44) = main%weight
+	  ntu(45) = main%target%Eloss(1)
+	  ntu(46) = main%target%Eloss(2)
+	  ntu(47) = main%target%Eloss(3)
+	  ntu(48) = main%target%z
+	   if(electron_arm.eq.1 .or. electron_arm.eq.3.or. electron_arm.eq.7)then !	endif
+	  ntu(49) = zelec
+	  ntu(50) =zhadron
+	  endif
+	  if (electron_arm.eq.2 .or. electron_arm.eq.4 .or. electron_arm.eq.5 
+     >.or. electron_arm.eq.6.or. electron_arm.eq.8) then
+	  ntu(49) = zhadron
+	  ntu(50) = zelec
+	  endif
 	endif
-
 	call HFN(NtupleID,ntu)
 	if (debug(2)) write(6,*)'r_ntu_write: ending'
 	return
