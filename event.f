@@ -680,7 +680,7 @@ c	  endif
 	  radical = QB**2 - 4.*QA*QC
 	  if (radical.lt.0) return
           W2 = targ%M**2 + 2.*targ%M*vertex%nu - vertex%Q2
-	  if ( W2 .lt. (134.96+mp)**2 ) then
+	  if ( W2 .lt. (mpi0+mp)**2 ) then
 	     if (debug(2)) write(*,*) 'W2 below threshold  Q2 = ',vertex%Q2
 	     return
           endif
@@ -1606,7 +1606,7 @@ c
 	elseif (doing_delta) then
 c	  main%sigcc = peedelta(vertex,main)	!Need new xsec model.
 	   if (debug(2)) write(*,*) " call before maid = " ,main%q2,main%w,vertex%Ein,vertex%e%E,vertex%thetacm,vertex%phicm
-	   if ( main%w  >1073.2365 ) then
+	   if ( main%w  > Mpi0 + mh ) then
 	      ireact=1 ! pi0 p
 	      if (abs(mrecoil-939.57) <10 ) ireact=3
 	      if (abs(mrecoil) <10 ) ireact=100

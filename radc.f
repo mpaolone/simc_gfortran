@@ -294,7 +294,7 @@ cdg	endif
 	    Egamma_max(1) = gen%sumEgen%max - vertex%e%E
 CDJG	    if (ntail.ne.0) Egamma_min(1) = gen.sumEgen.min - vertex.e.E
 	  else if (doing_delta) then
-	     wthr = 134.96 + mh
+	     wthr = Mpi0 + mh
 	     sin2th=sin(vertex%e%theta/2)*sin(vertex%e%theta/2)
 	     ebeam_max = (wthr*wthr+2*mp*edge%e%E%max-mp*mp)
              ebeam_max = ebeam_max/(2*mp-4*edge%e%E%max*sin2th)
