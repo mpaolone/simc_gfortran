@@ -175,7 +175,7 @@ c        parameter(zd_fp    = 307.95)
 C Distances for 2017 ME's
         parameter(zd_hbin  = 118.39)
 	parameter(zd_hbmen = 17.61) ! shms-2017 ME's
-        parameter(zd_hbmex = 80.0)
+        parameter(zd_hbmex = 80.01636)
         parameter(zd_hbout = 17.61)
 c	parameter (z_entr = 52.04) ! 6.35 cm in front of Q1
 	parameter (z_entr = 25.189) ! 82.789 cm from center of HB
