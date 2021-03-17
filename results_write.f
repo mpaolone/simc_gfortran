@@ -159,9 +159,9 @@ c	  ntu(43) = pfer/1000.*abs(dummy)/dummy		!p_fermi - GeV/c
 	  ntu(51) = main%w/1.e3
 	  ntu(52) = (vertex%Emiss*vertex%Emiss-vertex%Pmiss*vertex%Pmiss)/1.e6
 	  ntu(53) = main%phi_pq
-	  ntu(54) = main%target%Eloss(1)
-	  ntu(55) = main%target%Eloss(2)
-	  ntu(56) = main%target%Eloss(3)
+	  ntu(54) = save_mp_eloss(1) ! main%target%Eloss(1)
+	  ntu(55) = save_mp_eloss(2) !main%target%Eloss(2)
+	  ntu(56) = save_mp_eloss(3) !main%target%Eloss(3)
 	  ntu(57) = main%target%z
 	  if(using_tgt_field) then
 	     ntu(54) = recon%theta_tarq
@@ -238,9 +238,9 @@ c	  ntu(43) = pfer/1000.*abs(dummy)/dummy		!p_fermi - GeV/c
 	  ntu(42) = ntup%radphot/1000.			!radphot - GeV
 	  ntu(43) = main%sigcc
 	  ntu(44) = main%weight
-	  ntu(45) = main%target%Eloss(1)
-	  ntu(46) = main%target%Eloss(2)
-	  ntu(47) = main%target%Eloss(3)
+	  ntu(45) = save_mp_eloss(1) !main%target%Eloss(1)
+	  ntu(46) = save_mp_eloss(2) !main%target%Eloss(2)
+	  ntu(47) = save_mp_eloss(3) !main%target%Eloss(3)
 	  ntu(48) = main%target%z
 	   if(electron_arm.eq.1 .or. electron_arm.eq.3.or. electron_arm.eq.7)then !	endif
 	  ntu(49) = zelec

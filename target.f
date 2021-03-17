@@ -6,7 +6,7 @@
 
 	integer narm
 	integer typeflag   !1=generate eloss, 2=min, 3=max, 4=most probable
-	real*8 zpos, energy, mass, theta
+	real*8 ztar,zpos, energy, mass, theta
 	real*8 Eloss, radlen
 	real*8 forward_path, side_path
 	real*8 s_target, s_Al, s_kevlar, s_air, s_mylar	! distances travelled
@@ -27,11 +27,14 @@ c
 
 	s_Al = 0.0
 	liquid = targ%Z.lt.2.4
-
-	if (abs(zpos) .gt. (targ%length/2.+1.e-5)) then
-	  write(6,*) 'call to trip_thru_target has |zpos| > targ.length/2.'
+	ztar = zpos
+        if ( ztar  .lt. -targ%length/2.) ztar = -targ%length/2.
+        if ( ztar  .gt.  targ%length/2.) ztar = +targ%length/2.
+	if (abs(ztar) .gt. (targ%length/2.+1.e-5)) then
+	  write(6,*) 'call to trip_thru_target has |ztar| > targ.length/2.'
 	  write(6,*) 'could be numerical error, or could be error in target offset'
-	  write(6,*) 'zpos=',zpos,'  targ%length/2.=',targ%length/2.
+	  write(6,*) 'ztar=',ztar,'  targ%length/2.=',targ%length/2.
+	  
 	endif
 c targ%can ==3 is loop1 2017 target
 	if (targ%can .eq. 3) then
@@ -57,7 +60,7 @@ c targ%can ==4 is loop2 2017 target
 ! The incoming electron
 
 10	continue
-	s_target = (targ%length/2. + zpos) / abs(cos(targ%angle))
+	s_target = (targ%length/2. + ztar) / abs(cos(targ%angle))
 	if (liquid) then			!liquid target
 	  if (targ%can .eq. 1) then		!beer can 2017 target loop2
 	    s_Al = s_Al + 0.015 ! cm from report on loop2
@@ -92,7 +95,6 @@ c targ%can ==4 is loop2 2017 target
 ! .....		X0=28.6cm for Kapton, X0=28.7cm for Mylar) 
 ! ...... ASSUMES liquid targets are 2.65" wide, and have 5.0 mil Al side walls.
 
-! ... For SHMS, use SOS windows for now (just a space filler for now).
 
 20	continue
 	if (electron_arm.eq.1) then		!electron is in HMS
@@ -100,31 +102,31 @@ c targ%can ==4 is loop2 2017 target
 	  s_air = 24.61
  	  s_kevlar = 0.015*inch_cm
 	  s_mylar = 0.005*inch_cm
-	  forward_path = (targ%length/2.-zpos) / abs(cos(theta+targ%angle))
+	  forward_path = (targ%length/2.-ztar) / abs(cos(theta+targ%angle))
 	else if (electron_arm.eq.2) then			!SOS
 	  s_Al = 0.008*inch_cm
 	  s_air = 15
  	  s_kevlar = 0.005*inch_cm
 	  s_mylar = 0.003*inch_cm
-	  forward_path = (targ%length/2.-zpos) / abs(cos(theta-targ%angle))
+	  forward_path = (targ%length/2.-ztar) / abs(cos(theta-targ%angle))
 	else if (electron_arm.eq.3) then			!HRS-R
 	  s_Al = 0.013*inch_cm
 	  s_air = 15
  	  s_kevlar = 0.*inch_cm
 	  s_mylar = 0.010*inch_cm
-	  forward_path = (targ%length/2.-zpos) / abs(cos(theta-targ%angle))
+	  forward_path = (targ%length/2.-ztar) / abs(cos(theta-targ%angle))
 	else if (electron_arm.eq.4) then			!HRS-L
 	  s_Al = 0.013*inch_cm
 	  s_air = 15
  	  s_kevlar = 0.*inch_cm
 	  s_mylar = 0.010*inch_cm
-	  forward_path = (targ%length/2.-zpos) / abs(cos(theta-targ%angle))
+	  forward_path = (targ%length/2.-ztar) / abs(cos(theta-targ%angle))
 	else if (electron_arm.eq.5 .or. electron_arm.eq.6) then	!SHMS
 	  s_Al = (0.020+0.010)*inch_cm ! scattering chamber (0.020) + HB entrance window (0.010)
 	  s_air = 57.27
  	  s_kevlar = 0.00
 	  s_mylar = 0.00
-	  forward_path = (targ%length/2.-zpos) / abs(cos(theta-targ%angle))
+	  forward_path = (targ%length/2.-ztar) / abs(cos(theta-targ%angle))
 	endif
 	s_target = forward_path
 
@@ -146,10 +148,10 @@ c targ%can ==4 is loop2 2017 target
 
 	    t=tan(theta)**2
 	    atmp=1+t
-	    btmp=-2*zpos*t
-	    ctmp=zpos**2*t-(targ%length/2.)**2
+	    btmp=-2*ztar*t
+	    ctmp=ztar**2*t-(targ%length/2.)**2
 	    z_can=(-btmp+sqrt(btmp**2-4.*atmp*ctmp))/2./atmp
-	    side_path = (z_can - zpos)/abs(cos(theta))
+	    side_path = (z_can - ztar)/abs(cos(theta))
             s_target = side_path
 	    costmp=z_can/(targ%length/2.)
 	    if (abs(costmp).le.1) then
@@ -164,7 +166,7 @@ c	       stop
 	    s_Al = s_Al + 0.0050*inch_cm/abs(sin(target_pi/2 - (theta - th_can)))
 	  else if (targ%can .eq. 3.or. targ%can .eq. 4) then	! loop1 or loop2 cryo2017
 	     can_len = targ%length - inner_radius_2017 ! length can without half-sphere cap
-	     zlen_before = targ%length/2.+zpos
+	     zlen_before = targ%length/2.+ztar
 	     if ( (zlen_before+inner_radius_2017/tan(theta)) .lt. can_len) then
 		s_target = inner_radius_2017/sin(theta)
                 s_al = s_al+ side_wall_2017
@@ -194,6 +196,7 @@ c	       stop
 	if (s_kevlar .eq. 0) Eloss_kevlar=0
 	if (s_mylar .eq. 0) Eloss_mylar=0
 	Eloss = Eloss_target + Eloss_Al + Eloss_air + Eloss_kevlar + Eloss_mylar
+ 
 
 	return
 
@@ -205,35 +208,35 @@ c	       stop
 	  s_air = 24.61
   	  s_kevlar = 0.015*inch_cm
 	  s_mylar = 0.005*inch_cm
-	  forward_path = (targ%length/2.-zpos) / abs(cos(theta+targ%angle))
+	  forward_path = (targ%length/2.-ztar) / abs(cos(theta+targ%angle))
 	else if (hadron_arm.eq.2) then				!SOS
 	  s_Al = 0.008*inch_cm
 	  s_air = 15
  	  s_kevlar = 0.005*inch_cm
 	  s_mylar = 0.003*inch_cm
-	  forward_path = (targ%length/2.-zpos) / abs(cos(theta-targ%angle))
+	  forward_path = (targ%length/2.-ztar) / abs(cos(theta-targ%angle))
 	else if (hadron_arm.eq.3) then				!HRS-R
 	  s_Al = 0.013*inch_cm
 	  s_air = 15
  	  s_kevlar = 0.*inch_cm
 	  s_mylar = 0.010*inch_cm
-	  forward_path = (targ%length/2.-zpos) / abs(cos(theta-targ%angle))
+	  forward_path = (targ%length/2.-ztar) / abs(cos(theta-targ%angle))
 	else if (hadron_arm.eq.4) then				!HRS-L
 
-!	  if (abs(zpos/targ.length).lt.0.00001) write(6,*) 'SOMEONE LEFT THE SAFETY WINDOW IN SIMC!!!!!!!'
+!	  if (abs(ztar/targ.length).lt.0.00001) write(6,*) 'SOMEONE LEFT THE SAFETY WINDOW IN SIMC!!!!!!!'
 !	  s_Al = 0.125*inch_cm
 
 	  s_Al = 0.013*inch_cm
 	  s_air = 15
  	  s_kevlar = 0.*inch_cm
 	  s_mylar = 0.010*inch_cm
-	  forward_path = (targ%length/2.-zpos) / abs(cos(theta-targ%angle))
+	  forward_path = (targ%length/2.-ztar) / abs(cos(theta-targ%angle))
 	else if (hadron_arm.eq.5 .or. hadron_arm.eq.6) then	!SHMS
 	  s_Al = (0.020+0.010)*inch_cm ! scattering chamber (0.020) + HB entrance window (0.010)
 	  s_air = 57.27
  	  s_kevlar = 0.00
 	  s_mylar = 0.00
-	  forward_path = (targ%length/2.-zpos) / abs(cos(theta-targ%angle))
+	  forward_path = (targ%length/2.-ztar) / abs(cos(theta-targ%angle))
 	endif
 
 	s_target = forward_path
@@ -255,10 +258,10 @@ c	       stop
 
 	    t=tan(theta)**2
 	    atmp=1+t
-	    btmp=-2*zpos*t
-	    ctmp=zpos**2*t-(targ%length/2.)**2
+	    btmp=-2*ztar*t
+	    ctmp=ztar**2*t-(targ%length/2.)**2
 	    z_can=(-btmp+sqrt(btmp**2-4.*atmp*ctmp))/2./atmp
-	    side_path = (z_can - zpos)/abs(cos(theta))
+	    side_path = (z_can - ztar)/abs(cos(theta))
             s_target = side_path
 	    costmp=z_can/(targ%length/2.)
 	    if (abs(costmp).le.1) then
@@ -273,7 +276,7 @@ c	      stop
 	    s_Al = s_Al + 0.0050*inch_cm/abs(sin(target_pi/2 - (theta - th_can)))
 	  else if (targ%can .eq. 3 .or. targ%can .eq. 4) then	! loop1 cryo2017
 	     can_len = targ%length - inner_radius_2017 ! length can without half-sphere cap
-	     zlen_before = targ%length/2.+zpos
+	     zlen_before = targ%length/2.+ztar
 	     if ( (zlen_before+inner_radius_2017/tan(theta)) .lt. can_len) then
 		s_target = inner_radius_2017/sin(theta)
                 s_al = s_al+ side_wall_2017
@@ -303,8 +306,7 @@ c	      stop
      &                    typeflag,Eloss_mylar)
 
 	Eloss=Eloss_target+Eloss_Al+Eloss_air+Eloss_kevlar+Eloss_mylar
-
-
+ 
 	return
 	end
 

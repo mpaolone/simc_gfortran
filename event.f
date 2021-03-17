@@ -178,6 +178,8 @@ C DJG Note that this means that +fry points down. I will make frx point left.
 
 	call trip_thru_target (1, main%target%z-targ%zoffset, Ebeam, 0.0e0,
      >		main%target%Eloss(1), main%target%teff(1),Me,1)
+	call trip_thru_target (1, main%target%z-targ%zoffset, Ebeam, 0.0e0,
+     >		save_mp_eloss(1), main%target%teff(1),Me,4)
 	if (.not.using_Eloss) main%target%Eloss(1) = 0.0
 	if (using_Coulomb) then
 c	  main%target%Coulomb=targ%Coulomb_constant*(3.-(grnd())**(2./3.))
@@ -1165,11 +1167,10 @@ c
 ! ... unit vector components of outgoing e,p
 ! ... z is DOWNSTREAM, x is DOWN and y is LEFT looking downstream.
 
-C Ebeam_vertex_ave has been shifted to account for Coulomb effects
-C In general, the Hall C analyzer does not correct for this
-C If you do NOT apply an energy shift in the ENGINE to account
-C for Coulomb corrections, make sure the line below is NOT commented out.
-	recon%Ein = Ebeam_vertex_ave - targ%Coulomb%ave
+c mkj 
+	recon%Ein =  Ebeam
+	if (correct_Eloss) recon%Ein = Ebeam - save_mp_eloss(1)
+c
 
 	if (debug(4)) write(6,*)'comp_rec_ev: at 1'
 	recon%ue%x = sin(recon%e%theta)*cos(recon%e%phi)

@@ -1562,10 +1562,11 @@ C DJG For spectrometers to the left of the beamline, need to pass ctheta,-stheta
      >           dy_tmp,recon%p%theta,recon%p%phi)
 
 ! ... correct for energy loss - use most probable (last flag = 4)
+	  call trip_thru_target (3, zhadron, recon%p%E,
+     >		recon%p%theta, eloss_P_arm, r,Mh,4)
+	  save_mp_eloss(3) = eloss_P_arm
 
 	if (correct_Eloss) then
-	  call trip_thru_target (3, zero, recon%p%E,
-     >		recon%p%theta, eloss_P_arm, r,Mh,4)
 	  recon%p%E = recon%p%E + eloss_P_arm
 	  recon%p%E = max(recon%p%E,sqrt(Mh2+0.000001)) !can get P~0 when calculating hadron momentum-->P<0 after eloss
 	  recon%p%P = sqrt(recon%p%E**2-Mh2)
@@ -1767,9 +1768,10 @@ C DJG For spectrometers to the left of the beamline, need to pass ctheta,-stheta
 
 ! ... correct for energy loss and correct for Coulomb deceleration
 
-	if (correct_Eloss) then
-	  call trip_thru_target (2, zero, recon%e%E, recon%e%theta,
+	  call trip_thru_target (2, zelec, recon%e%E, recon%e%theta,
      >                              eloss_E_arm, r, Me, 4)
+	  save_mp_eloss(2) =  eloss_E_arm
+	if (correct_Eloss) then
 	  recon%e%E = recon%e%E + eloss_E_arm
 	endif
 c	recon%e%E = recon%e%E + targ%Coulomb%ave

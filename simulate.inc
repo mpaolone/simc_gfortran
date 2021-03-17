@@ -208,3 +208,6 @@ C momentum distribution (nump=#/points, pval=p, mprob=integral (p^2 f(p) dp)
 	integer pad_1x_lo_num,pad_1x_hi_num,pad_2x_lo_num,pad_2x_hi_num
 	common /shms_scin_x_padcut/ pad_1x_lo_num,pad_1x_hi_num
      >    ,pad_2x_lo_num,pad_2x_hi_num
+c
+	real*8 save_mp_eloss(3)
+	common /save_eloss/ save_mp_eloss
