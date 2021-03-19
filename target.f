@@ -368,7 +368,7 @@ C the perfect range, but it's easier than reproducing the generated limits here
      &           targ%Eloss(2)%min, targ%teff(2)%min, Me, 2)
 
 ! ... liquid
-	else if (targ%can .eq. 1) then		!beer can
+	else if (targ%can .eq. 1 ) then		!beer can
 	  if (z%max.ge.targ%length/2.) then
 	    th_corner_max = target_pi/2.
 	  else
@@ -409,15 +409,14 @@ C the perfect range, but it's easier than reproducing the generated limits here
 	  if (z%max.ge.targ%length/2.) then
 	    th_corner_max = target_pi/2.
 	  else
-	    th_corner_max = atan(inner_radius_2017*inch_cm/(targ%length/2.-z%max))
+	    th_corner_max = atan(inner_radius_2017/(targ%length/2.-z%max))
 	  endif
-	  th_corner_min = atan(inner_radius_2017*inch_cm/(targ%length/2.-z%min))
-
+	  th_corner_min = atan(inner_radius_2017/(targ%length/2.-z%min))
 ! ... max loss: do we have access to a corner shot?  try a hair on either
 ! ... side, front or side walls could be thicker (too lazy to check!)
 	  if (th_corner_min.le.the%max .and. th_corner_max.ge.the%min) then
 	    th_corner = max(th_corner_min,the%min)
-	    zz = targ%length/2. - inner_radius_2017*inch_cm/tan(th_corner)
+	    zz = targ%length/2. - inner_radius_2017/tan(th_corner)
 	    th1 = th_corner-.0001
 	    th2 = th_corner+.0001
 	  else
@@ -492,7 +491,7 @@ C the perfect range, but it's easier than reproducing the generated limits here
 	  targ%teff(3)%min = min(t1,t2)
 
 ! ... liquid
-	else if (targ%can .eq. 1) then	!beer can
+	else if (targ%can .eq. 1 ) then	!beer can
 	  if (z%max .ge. targ%length/2.) then
 	    th_corner_max = target_pi/2.
 	  else
@@ -505,6 +504,49 @@ C the perfect range, but it's easier than reproducing the generated limits here
 	  if (th_corner_min.le.thp%max .and. th_corner_max.ge.thp%min) then
 	    th_corner = max(th_corner_min,thp%min)
 	    zz = targ%length/2. - 1.25*inch_cm/tan(th_corner)
+	    th1 = th_corner-.0001
+	    th2 = th_corner+.0001
+	  else
+	    zz = z%min
+	    th1 = thp%min
+	    th2 = thp%max
+	  endif
+	  call trip_thru_target (3, zz, energymin, th1, E1, t1, m, 3)
+	  call trip_thru_target (3, zz, energymin, th2, E2, t2, m, 3)
+	  call trip_thru_target (3, zz, energymax, th1, E3, t3, m, 3)
+	  call trip_thru_target (3, zz, energymax, th2, E4, t4, m, 3)
+	  targ%Eloss(3)%max = max(E1,E2,E3,E4)
+	  targ%teff(3)%max = max(t1,t2,t3,t4)
+
+! ........ min loss: try all possibilities (in min case, no way
+! ........ an intermediate z or th will do the trick)
+	  targ%Eloss(3)%min = 1.d10
+	  do i = 0, 3
+	    call trip_thru_target (3, z%min+int(i/2)*(z%max-z%min), energymin,
+     >		thp%min+mod(i,2)*(thp%max-thp%min), E1, t1, m, 2)
+	    if (E1 .lt. targ%Eloss(3)%min) then
+	      targ%Eloss(3)%min = E1
+	      targ%teff(3)%min = t1
+	      zz = z%min+int(i/2)*(z%max-z%min)
+	      th1 = thp%min+mod(i,2)*(thp%max-thp%min)
+	    endif
+	  enddo
+	  call trip_thru_target (3, zz, energymax, th1, E1, t1, m, 2)
+	  targ%Eloss(3)%min = min(targ%Eloss(3)%min, E1)
+	else if (targ%can .eq. 3 .or.targ%can .eq. 4 ) then
+	  if (z%max .ge. targ%length/2.) then
+	    th_corner_max = target_pi/2.
+	  else
+	    th_corner_max = atan(inner_radius_2017/(targ%length/2.-z%max))
+	  endif
+	  th_corner_min = atan(inner_radius_2017/(targ%length/2.-z%min))
+          write(*,*) ' corer = ',th_corner_min,th_corner_max
+! ........ max loss: do we have access to a corner shot?
+! ........ try a hair on either side, front or side walls could be
+! thicker (too lazy to check!)
+	  if (th_corner_min.le.thp%max .and. th_corner_max.ge.thp%min) then
+	    th_corner = max(th_corner_min,thp%min)
+	    zz = targ%length/2. - inner_radius_2017/tan(th_corner)
 	    th1 = th_corner-.0001
 	    th2 = th_corner+.0001
 	  else
