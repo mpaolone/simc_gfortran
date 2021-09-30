@@ -19,7 +19,7 @@ Csoft = /home/huberg/r2d2/simc/
 ## THE REST SHOULD BE OK WITHOUT MODIFICATION.
 
 ## This tells make not to delete these target files on error/interrupt (see man page)
-.PRECIOUS: *.o sos/*.o hms/*.o hrsl/*.o hrsr/*.o shms/*.o calo/*.o MAID/*.o VCS/*.o
+.PRECIOUS: *.o sos/*.o hms/*.o hrsl/*.o hrsr/*.o shms/*.o calo/*.o
 
 RM        = rm -f 
 SHELL     = /bin/sh
@@ -55,8 +55,9 @@ my_deps = $(my_objs:.o=.d)
 
 MYOS := $(subst -,,$(shell uname))
 #CERNLIBS = -lgeant$(GEANTVER) -lpawlib -lgraflib -lgrafX11 -lpacklib -lmathlib
-CERNLIBS = -Wl,-static -lgeant$(GEANTVER) -lpawlib -lgraflib -lgrafX11 -lpacklib -lkernlib -lmathlib -Wl,-dy
-
+#CERNLIBS = -Wl,-static -lgeant$(GEANTVER) -lpawlib -lgraflib -lgrafX11 -lpacklib -lkernlib -lmathlib -Wl,-dy
+#CERNLIBS = -lgeant$(GEANTVER) -lpawlib -lgraflib -lpacklib -lkernlib -lmathlib 
+CERNLIBS = -lnanocernlib_geant321 -lnanocernlib_packlib -lnanocernlib_mathlib -lnanocernlib_mclibs
 #For use with gfortran compiler
 # -fno-automatic - all program storage treated as static
 ifeq ($(MYOS),Linux)
@@ -67,7 +68,7 @@ ifeq ($(MYOS),Linux)
 #  CERN_ROOT = /usr/lib/cernlib/2006
 # 64 bit, standard Fedora distributuion
 #  CERN_ROOT =  /usr/lib64/cernlib/2006 
-  FFLAGSA=-O -w -ffixed-line-length-132 -ff2c -fno-automatic -fdefault-real-8 -ffpe-trap=invalid
+  FFLAGSA=-O -W -ffixed-line-length-132 -ff2c -fno-automatic -fdefault-real-8
   INCLUDES=-I.
   FFLAGS= $(INCLUDES) $(FFLAGSA)
   FFLAG1=$(FFLAGS) -c
@@ -88,8 +89,8 @@ endif
 # Note that the CTP libraries still end up in the O.Linux directory...
 ifeq ($(MYOS),Darwin)
   LIBROOT = CTP/O.Linux/Linux/lib
-  CERN_ROOT = /apps/cernlib/i386_fc8/2005
-  FFLAGSA=-O -W -ffixed-line-length-132 -ff2c -fno-automatic -fdefault-real-8
+  CERN_ROOT = /Users/mpaolone/work/nanocernlib/try_latest/install
+  FFLAGSA=-O -W -std=legacy -ffixed-line-length-132 -ff2c -fno-automatic -fdefault-real-8
   INCLUDES=-I.
   FFLAGS= $(INCLUDES) $(FFLAGSA)
   FFLAG1=$(FFLAGS) -c

@@ -51,6 +51,7 @@ C The arguments
 
 c external function
 	real*8 gauss1
+	real*8 cauchy1
 C Local declarations.
 
 	integer*4	spectr	!spectrometer number (for tune-dependent stuff)
@@ -66,7 +67,8 @@ c need real*4 for cernlib routine lfut
 	real*8  tmpran1,tmpran2
 	real*8   nsig_max
 	real*8 hdc_del_plane
-	parameter (nsig_max=99.0e0)
+c	parameter (nsig_max=99.0e0)
+	parameter (nsig_max=1.0e4)
 c mkj
 	logical use_det_cut
 	parameter (use_det_cut=.true.)
@@ -188,8 +190,10 @@ c	if (1 .eq. 1) call musc_ext(m2,p,radw,drift,dydzs,dxdzs,ys,xs)
 	  radw = hdc_wire_thick/hdc_wire_radlen
 	  if(ms_flag) call musc(m2,p,radw,dydzs,dxdzs)
 	  if(wcs_flag) then
-	    tmpran1 = gauss1(nsig_max)	!gaussian, truncated at 99 sigma.
-	    tmpran2 = gauss1(nsig_max)
+c	    tmpran1 = gauss1(nsig_max)	!gaussian, truncated at 99 sigma.
+c	    tmpran2 = gauss1(nsig_max)
+	    tmpran1 = cauchy1(nsig_max)	!gaussian, truncated at 99 sigma.
+	    tmpran2 = cauchy1(nsig_max)
 	  else
 	    tmpran1 = 0.
 	    tmpran2 = 0.
@@ -255,8 +259,10 @@ C       We've already done decay up to the half-way point between the chambers.
 	  radw = hdc_wire_thick/hdc_wire_radlen
 	  if(ms_flag) call musc(m2,p,radw,dydzs,dxdzs)
 	  if(wcs_flag) then
-	    tmpran1 = gauss1(nsig_max)	!gaussian, truncated at 99 sigma.
-	    tmpran2 = gauss1(nsig_max)
+c	    tmpran1 = gauss1(nsig_max)	!gaussian, truncated at 99 sigma.
+c	    tmpran2 = gauss1(nsig_max)
+	    tmpran1 = cauchy1(nsig_max)	!cauchy
+	    tmpran2 = cauchy1(nsig_max)
 	  else
 	    tmpran1 = 0.
 	    tmpran2 = 0.

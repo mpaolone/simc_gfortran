@@ -139,7 +139,7 @@ c
 	real*8 X,fland
       PARAMETER (P1=.60715,P2=.67794,P3=.52382E-1,P4=.94753,
      +           P5=.74442,P6=1.1934)
-      FLAND(X) = P1+P6*X+(P2+P3*X)*EXP(P4*X+P5)
+      FLAND = P1+P6*X+(P2+P3*X)*EXP(P4*X+P5)
       RETURN
       END
 c
